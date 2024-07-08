@@ -14,6 +14,7 @@ export const loader = async () => {
     return { worth, products }
   } catch (error) {
     console.log(error)
+    return error
   }
 }
 

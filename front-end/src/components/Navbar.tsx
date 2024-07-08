@@ -17,7 +17,10 @@ const Navbar = () => {
       >
         <FaAlignLeft />
       </button>
-      <Logo container='w-[80px] md:w-[100px] block lg:hidden ' image='w-full' />
+      <Logo
+        container='w-[60px] md:w-[100px] block lg:hidden rounded-full overflow-hidden '
+        image='w-full'
+      />
       <h1 className='hidden lg:block text-3xl'>Dashboard</h1>
       <Logout />
     </div>

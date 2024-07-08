@@ -1,17 +1,18 @@
-import { useDashboardContext } from "../pages/DashboardLayout"
+// import { useDashboardContext } from "../pages/DashboardLayout"
 import PageLink from "./PageLinks"
 import { FaSitemap, FaShoppingBasket } from "react-icons/fa"
-import { MdSettings, MdOutlineCreateNewFolder, MdHistory } from "react-icons/md"
+import { MdOutlineCreateNewFolder } from "react-icons/md"
+// import { MdSettings, MdOutlineCreateNewFolder, MdHistory } from "react-icons/md"
 import { CgProfile } from "react-icons/cg"
 import { CiShoppingCart } from "react-icons/ci"
 import { AiFillAppstore } from "react-icons/ai"
 import { GiExpense } from "react-icons/gi"
 import { IoIosPeople } from "react-icons/io"
-import { TbLockCheck } from "react-icons/tb"
+// import { TbLockCheck } from "react-icons/tb"
 import Logo from "./Logo"
 
 const BigSidebar = () => {
-  const { currentUser } = useDashboardContext()
+  // const { currentUser } = useDashboardContext()
 
   return (
     // wrapper
@@ -19,7 +20,10 @@ const BigSidebar = () => {
       {/* container */}
       <div className='h-full pt-[10px]'>
         {/* logo */}
-        <Logo container='w-[50%] m-auto mb-[30px]' image='w-full' />
+        <Logo
+          container='w-[40%] m-auto mb-[30px] rounded-full overflow-hidden '
+          image='w-full'
+        />
         {/* links */}
         <div>
           <PageLink url='' text='Create Order' icon={<CiShoppingCart />} />
@@ -32,17 +36,17 @@ const BigSidebar = () => {
           <PageLink url='products' text='All Products' icon={<FaSitemap />} />
           <PageLink url={`store`} text='Store' icon={<AiFillAppstore />} />
           <PageLink url='expenses' text='Expenses' icon={<GiExpense />} />
-          <PageLink url='history' text='History' icon={<MdHistory />} />
+          {/* <PageLink url='history' text='History' icon={<MdHistory />} /> */}
           <PageLink url='customers' text='Customers' icon={<IoIosPeople />} />
-          {currentUser.role === "admin" && (
+          {/* {currentUser.role === "admin" && (
             <PageLink
               url='permissions'
               text='Permissions'
               icon={<TbLockCheck />}
             />
-          )}
+          )} */}
           <PageLink url={`profile`} text='Profile' icon={<CgProfile />} />
-          <PageLink url={`settings`} text='Settings' icon={<MdSettings />} />
+          {/* <PageLink url={`settings`} text='Settings' icon={<MdSettings />} /> */}
         </div>
       </div>
     </div>

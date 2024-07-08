@@ -1,13 +1,19 @@
 import { SingleProductType } from "../utils/types"
 import { Link } from "react-router-dom"
 import { CiEdit } from "react-icons/ci"
+import { useDashboardContext } from "../pages/DashboardLayout"
 
 function SingleProduct({ _id, name, CP, SP, qty }: SingleProductType) {
+  const { currentUser } = useDashboardContext()
   return (
     <div className='grid grid-cols-7 border'>
       <div className='col-span-2 text-[8px] md:text-sm lg:text-base p-2 capitalize relative'>
         {name}
-        <div className='absolute top-0 right-0 group'>
+        <div
+          className={`${
+            currentUser.role !== "admin" && "hidden"
+          } absolute top-0 right-0 group`}
+        >
           <Link to={`../update-product/${_id}`} className='text-blue-700 '>
             <CiEdit />
           </Link>
