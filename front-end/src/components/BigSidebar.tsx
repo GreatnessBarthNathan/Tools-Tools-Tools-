@@ -20,10 +20,7 @@ const BigSidebar = () => {
       {/* container */}
       <div className='h-full pt-[10px]'>
         {/* logo */}
-        <Logo
-          container='w-[40%] m-auto mb-[30px] rounded-full overflow-hidden '
-          image='w-full'
-        />
+        <Logo container='w-[40%] m-auto mb-[30px]' image='w-full' />
         {/* links */}
         <div>
           <PageLink url='' text='Create Order' icon={<CiShoppingCart />} />
