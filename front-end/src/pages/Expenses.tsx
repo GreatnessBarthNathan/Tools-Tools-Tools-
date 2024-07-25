@@ -94,7 +94,7 @@ function Expenses() {
 
       <SearchExpenseForm searchExpenses={searchExpenses} />
 
-      <div className='flex justify-between items-center text-[8px] md:xs lg:text-base bg-white p-1 rounded shadow-sm'>
+      <div className='flex justify-between items-center text-[8px] md:xs lg:text-base bg-[var(--bgColor)] p-1 rounded shadow-sm'>
         <h2>
           Showing{" "}
           <span className='text-blue-800 font-semibold'>
@@ -104,7 +104,7 @@ function Expenses() {
         </h2>
         <Link
           to='/dashboard/create-expense'
-          className='bg-blue-500 text-white rounded py-1 px-2 hover:bg-blue-800 ease-in-out duration-300'
+          className='bg-[var(--primary)] text-white rounded py-1 px-2 hover:bg-[var(--hoverColor)] ease-in-out duration-300'
         >
           New Expense
         </Link>

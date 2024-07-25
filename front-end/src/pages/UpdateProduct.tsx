@@ -77,9 +77,9 @@ function UpdateProduct() {
   return (
     <main className='py-5'>
       <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
-        Edit Product
+        Update Product
       </h1>
-      <section className='bg-white px-2 py-5 rounded-md'>
+      <section className='bg-[var(--bgColor)] px-2 py-5 rounded-md'>
         <form
           onSubmit={handleSubmit}
           className='grid md:grid-cols-2 lg:grid-cols-3 gap-2'
@@ -160,7 +160,6 @@ function UpdateProduct() {
               type='number'
               required
               value={targetProduct.add}
-              min={0}
               className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
               onChange={(e) =>
                 setTargetProduct({
@@ -184,7 +183,7 @@ function UpdateProduct() {
 
           <button
             type='submit'
-            className={`bg-blue-500 p-2 rounded text-white hover:bg-blue-700 ease-in-out duration-300 self-end ${
+            className={`bg-[var(--primary)] p-2 rounded text-white hover:bg-[var(--hoverColor)] ease-in-out duration-300 self-end ${
               isSubmitting === "submitting" && "cursor-wait"
             }`}
           >

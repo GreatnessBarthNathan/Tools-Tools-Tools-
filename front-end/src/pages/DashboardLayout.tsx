@@ -6,7 +6,13 @@ import SmallSidebar from "../components/SmallSidebar"
 import Navbar from "../components/Navbar"
 import Loading from "../components/Loading"
 import customFetch from "../utils/customFetch"
-import { ProductTypes, OrderType, ExpenseType, UserTypes } from "../utils/types"
+import {
+  ProductTypes,
+  OrderType,
+  ExpenseType,
+  UserTypes,
+  TransactionType,
+} from "../utils/types"
 import axios from "axios"
 import { toast } from "react-toastify"
 
@@ -21,6 +27,9 @@ type ValueTypes = {
   fetchOrders: () => Promise<OrderType[]>
   showSidebar: boolean
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>
+  fetchUsers: () => Promise<UserTypes[]>
+  fetchCash: () => Promise<TransactionType[]>
+  fetchBank: () => Promise<TransactionType[]>
 }
 
 export const loader = async () => {
@@ -47,6 +56,7 @@ const DashboardContext = createContext<ValueTypes | undefined>(undefined)
 function DashboardLayout() {
   const { user: currentUser, products: allProducts } =
     useLoaderData() as CombinedTypes
+
   const [submitting] = useState(false)
   const [products, setProducts] = useState<ProductTypes[]>([])
   const [showSidebar, setShowSidebar] = useState(false)
@@ -55,6 +65,21 @@ function DashboardLayout() {
 
   const navigation = useNavigation()
   const isLoading = navigation.state === "loading"
+
+  // FETCH USERS
+  const fetchUsers = async () => {
+    try {
+      const {
+        data: { users },
+      } = await customFetch.get("/user")
+      return users
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+        return
+      }
+    }
+  }
 
   // FETCH EXPENSES
   const fetchExpenses = async () => {
@@ -67,6 +92,34 @@ function DashboardLayout() {
       if (axios.isAxiosError(error)) {
         toast.error(error?.response?.data?.msg)
         return
+      }
+    }
+  }
+
+  // FETCH CASH
+  const fetchCash = async () => {
+    try {
+      const {
+        data: { cash },
+      } = await customFetch.get("/cash")
+      return cash
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+      }
+    }
+  }
+
+  // FETCH BANK
+  const fetchBank = async () => {
+    try {
+      const {
+        data: { bank },
+      } = await customFetch.get("/bank")
+      return bank
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
       }
     }
   }
@@ -129,6 +182,9 @@ function DashboardLayout() {
     fetchOrders,
     setShowSidebar,
     showSidebar,
+    fetchUsers,
+    fetchCash,
+    fetchBank,
   }
   return (
     <>

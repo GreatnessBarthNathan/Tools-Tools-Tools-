@@ -22,7 +22,6 @@ const Profile = () => {
     try {
       await customFetch.patch(`/user/update-user/${currentUser._id}`, inputs)
       toast.success("profile updated")
-      // navigate("/dashboard/orders")
       location.reload()
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -89,7 +88,7 @@ const Profile = () => {
 
           <button
             type='submit'
-            className={`text-white self-end bg-indigo-500 rounded cursor-pointer hover:bg-blue-300 ease-in-out duration-300 mt-7 p-[10px] `}
+            className={`text-white self-end bg-[var(--primary)] rounded cursor-pointer hover:bg-[var(--hoverColor)] ease-in-out duration-300 mt-7 p-[10px] `}
           >
             Submit
           </button>

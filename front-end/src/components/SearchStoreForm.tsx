@@ -14,7 +14,7 @@ function SearchStoreForm({
         <select
           name='product'
           id='product'
-          className='p-2 md:p-3 bg-[whitesmoke] w-full rounded outline-none border border-blue-500 mt-1 capitalize'
+          className='p-2 md:p-3 bg-[whitesmoke] w-full rounded outline-none border mt-1 capitalize'
         >
           {["all products", ...list].map((optionValue: string) => {
             return (
@@ -28,7 +28,7 @@ function SearchStoreForm({
 
       <button
         type='submit'
-        className='text-xs md:text-base bg-indigo-500 text-white p-[10px] md:p-3 rounded cursor-pointer  hover:bg-indigo-800 col-span-1 self-end'
+        className='text-xs md:text-base bg-[var(--primary)] text-white p-[10px] md:p-3 rounded cursor-pointer  hover:bg-[var(--hoverColor)] col-span-1 self-end'
       >
         Submit
       </button>

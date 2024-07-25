@@ -37,7 +37,7 @@ function CreateStoreProduct() {
       <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
         New Store Product
       </h1>
-      <section className='bg-white px-2 py-5 rounded-md'>
+      <section className='bg-[var(--bgColor)] px-2 py-5 rounded-md'>
         <form
           onSubmit={handleSubmit}
           className='grid md:grid-cols-2 lg:grid-cols-3 gap-2'
@@ -47,7 +47,7 @@ function CreateStoreProduct() {
             <select
               name='name'
               id='name'
-              className='p-2 md:p-2 bg-[whitesmoke] w-full rounded outline-none border border-blue-500 mt-3 capitalize'
+              className='p-2 md:p-2 bg-[whitesmoke] w-full rounded outline-none border mt-3 capitalize'
             >
               {productNames.map((optionValue: string) => {
                 return (
@@ -61,7 +61,7 @@ function CreateStoreProduct() {
           <FormRow type='number' labelText='quantity' name='store' required />
           <button
             type='submit'
-            className={`bg-blue-500 p-2 rounded text-white hover:bg-blue-700 ease-in-out duration-300 self-end ${
+            className={`bg-[var(--primary)] p-2 rounded text-white hover:bg-[var(--hoverColor)] ease-in-out duration-300 self-end ${
               isSubmitting === "submitting" && "cursor-wait"
             }`}
           >

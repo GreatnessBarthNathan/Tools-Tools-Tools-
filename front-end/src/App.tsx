@@ -22,6 +22,10 @@ import CreateExpense from "./pages/CreateExpense"
 import Profile from "./pages/Profile"
 import History from "./pages/History"
 import PayDebt from "./pages/PayDebt"
+import Cash from "./pages/Cash"
+import Bank from "./pages/Bank"
+import RecordCash from "./pages/RecordCash"
+import RecordBank from "./pages/RecordBank"
 
 // loaders
 import { loader as dashboardLoader } from "./pages/DashboardLayout"
@@ -113,8 +117,20 @@ const router = createBrowserRouter([
             loader: payDebtLoader,
           },
           {
-            path: "permissions",
-            element: <Permissions />,
+            path: "cash",
+            element: <Cash />,
+          },
+          {
+            path: "record-cash",
+            element: <RecordCash />,
+          },
+          {
+            path: "bank",
+            element: <Bank />,
+          },
+          {
+            path: "record-bank",
+            element: <RecordBank />,
           },
           {
             path: "expenses",
@@ -128,6 +144,7 @@ const router = createBrowserRouter([
             path: "history",
             element: <History />,
           },
+          { path: "permissions", element: <Permissions /> },
           {
             path: "profile",
             element: <Profile />,

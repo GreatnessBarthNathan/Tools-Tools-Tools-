@@ -7,6 +7,8 @@ import {
 } from "../errors/customErrors"
 import Expense from "../models/expensesModel"
 import User from "../models/userModel"
+import Cash from "../models/cashModel"
+import Bank from "../models/bankModel"
 import { StatusCodes } from "http-status-codes"
 import dayjs from "dayjs"
 
@@ -14,19 +16,38 @@ export const createExpense = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { description, amount } = req.body
-  if (!description || !amount)
+  const { description, amount, transactionType } = req.body
+  if (!description || !amount || !transactionType)
     throw new BadRequestError("Please provide all values")
 
-  req.body.enteredAt = dayjs(new Date(Date.now())).format("YYYY-MM-DD")
-  req.body.userId = req.user?.userId
+  const enteredAt = dayjs(new Date(Date.now())).format("YYYY-MM-DD")
+  const userId = req.user?.userId
 
   const user = await User.findOne({ _id: req.user?.userId })
   if (!user) throw new NotFoundError("user not found")
 
-  req.body.enteredBy = user.firstName
+  const enteredBy = user.firstName
 
-  await Expense.create(req.body)
+  if (transactionType === "cash") {
+    await Cash.create({
+      amount,
+      remark: description,
+      action: "release",
+      enteredBy: req.user?.userName,
+      enteredAt,
+    })
+  }
+  if (transactionType === "bank") {
+    await Bank.create({
+      amount,
+      remark: description,
+      action: "release",
+      enteredBy: req.user?.userName,
+      enteredAt,
+    })
+  }
+  await Expense.create({ amount, description, enteredBy, enteredAt, userId })
+
   res.status(StatusCodes.CREATED).json({ msg: "Expense created" })
 }
 

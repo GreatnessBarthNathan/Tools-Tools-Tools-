@@ -31,8 +31,8 @@ function Login() {
   }
   return (
     <div className='pb-[3rem] w-full h-full overflow-auto'>
-      <div className='bg-white w-[90%] m-auto mt-[100px] rounded border-t-4 border-indigo-500 p-5 shadow-md shadow-slate-300 md:w-[50%] lg:w-[40%]'>
-        <Logo container='w-[100px] m-auto mb-2' />
+      <div className='bg-white w-[90%] m-auto mt-[100px] rounded border-t-4 border-[var(--primary)] p-5 shadow-md shadow-slate-300 md:w-[50%] lg:w-[40%]'>
+        <Logo container='w-[100px] m-auto mb-2 rounded-full overflow-hidden' />
         <h2 className='text-center text-xl mb-10'>Login</h2>
         <form onSubmit={handleSubmit}>
           <FormRow type='text' labelText='username' name='userName' required />
@@ -44,8 +44,8 @@ function Login() {
           />
           <button
             type='submit'
-            className={`text-white bg-indigo-500 w-full p-2 rounded mt-4 cursor-pointer hover:bg-blue-300 ease-in-out duration-300 ${
-              isSubmitting && "bg-indigo-300 cursor-wait"
+            className={`text-white bg-[var(--primary)] w-full p-2 rounded mt-4 cursor-pointer hover:bg-[var(--hoverColor)] ease-in-out duration-300 ${
+              isSubmitting && "bg-[var(--hoverColor)] cursor-wait"
             }`}
             disabled={isSubmitting === "submitting"}
           >

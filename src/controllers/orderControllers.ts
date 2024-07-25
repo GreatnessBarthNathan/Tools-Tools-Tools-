@@ -1,4 +1,3 @@
-import mongoose from "mongoose"
 import {
   NotFoundError,
   UnAuthorizedError,
@@ -12,10 +11,12 @@ import User from "../models/userModel"
 import Expense from "../models/expensesModel"
 import { StatusCodes } from "http-status-codes"
 import dayjs from "dayjs"
+import Cash from "../models/cashModel"
+import Bank from "../models/bankModel"
 
 // CREATE ORDER
 export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
-  const { total, items, balance, customer } = req.body
+  const { total, items, balance, cash, bank, customer } = req.body
   if (!total || !items) throw new NotFoundError("Missing fields")
 
   req.body.enteredAt = dayjs(new Date(Date.now())).format("YYYY-MM-DD")
@@ -40,10 +41,27 @@ export const createOrder = async (req: AuthenticatedRequest, res: Response) => {
     total,
     orderItems,
     balance,
+    cash,
+    bank,
     userId: req.user?.userId,
     customer,
     enteredAt: req.body.enteredAt,
   })
+
+  if (cash > 0) {
+    await Cash.create({
+      amount: cash,
+      enteredBy: req.user?.userName,
+      enteredAt: req.body.enteredAt,
+    })
+  }
+  if (bank > 0) {
+    await Bank.create({
+      amount: bank,
+      enteredBy: req.user?.userName,
+      enteredAt: req.body.enteredAt,
+    })
+  }
 
   res.status(StatusCodes.CREATED).json({ msg: "Order Created" })
 }
@@ -53,23 +71,6 @@ export const getAllOrders = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  // const { from, to } = req.query
-  // const queryObject: { enteredAt: { $gte: string; $lte: string } } = {
-  //   enteredAt: {
-  //     $gte: dayjs(new Date(Date.now())).format("YYYY-MM-DD"),
-  //     $lte: dayjs(new Date(Date.now())).format("YYYY-MM-DD"),
-  //   },
-  // }
-
-  // if (from && to) {
-  //   queryObject.enteredAt = { $gte: from as string, $lte: to as string }
-  //   const orders = await Order.find(queryObject)
-  //   res.status(StatusCodes.OK).json({ count: orders.length, orders })
-  //   return
-  // } else {
-  //   const orders = await Order.find({})
-  //   res.status(StatusCodes.OK).json({ count: orders.length, orders })
-  // }
   const orders = await Order.find({}).sort({ enteredAt: -1 })
   res.status(StatusCodes.OK).json({ count: orders.length, orders })
 }

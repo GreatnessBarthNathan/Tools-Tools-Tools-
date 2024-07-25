@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: darkgoldenrod;
+  --hoverColor: goldenrod;
+  --bgColor: white;
+  --textSecondary: darkslategray;
+}
 body {
   margin: 0;
   background: whitesmoke;
@@ -28,7 +34,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(59, 59, 207);
+  background-color: var(--primary);
   border-radius: 6px;
 }
 
@@ -42,7 +48,7 @@ body {
   width: 70px;
   height: 70px;
   margin: auto;
-  border: 5px solid blue;
+  border: 5px solid var(--primary);
   border-top-color: white;
   border-radius: 50%;
   animation: spinner 0.5s linear infinite;

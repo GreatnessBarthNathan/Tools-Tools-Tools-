@@ -1,10 +1,11 @@
 export type UserTypes = {
   firstName: string
   lastName: string
-  branch: string
-  userName: string
+  branch?: string
+  userName?: string
   role?: string
   _id?: string
+  approved?: boolean
 }
 
 export type ProductTypes = {
@@ -53,6 +54,8 @@ export type OrderType = {
   enteredAt: string
   orderItems: OrderItemsType[]
   balance?: number
+  cash?: number
+  bank?: number
   customer: CustomerType
 }
 
@@ -79,4 +82,15 @@ export type AnalysisType = {
   grossProfit: number
   expenses: number
   netProfit: number
+  totalCash: number
+  totalBank: number
+}
+
+export type TransactionType = {
+  _id: string
+  amount: number
+  enteredBy: string
+  remark: string
+  enteredAt: string
+  action?: string
 }

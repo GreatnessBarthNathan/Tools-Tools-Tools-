@@ -6,17 +6,18 @@ import {
   updateCustomer,
   deleteCustomer,
 } from "../controllers/customerControllers"
+import { permissions } from "../middleware/permissions"
 
 const router = Router()
 
-router.post("/", createCustomer)
+router.post("/", permissions, createCustomer)
 
 router.get("/", getAllCustomers)
 
-router.get("/:id", getSingleCustomer)
+router.get("/:id", permissions, getSingleCustomer)
 
-router.patch("/:id", updateCustomer)
+router.patch("/:id", permissions, updateCustomer)
 
-router.delete("/:id", deleteCustomer)
+router.delete("/:id", permissions, deleteCustomer)
 
 export default router

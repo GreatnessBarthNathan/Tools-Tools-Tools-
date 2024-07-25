@@ -13,7 +13,7 @@ const PageLink = ({
     <div className='group hover:bg-[whitesmoke] '>
       <NavLink
         to={url}
-        className='flex items-center space-x-2 p-2 mb-1 text-slate-500 pl-10 group-hover:translate-x-4 ease-in-out duration-300 focus:bg-[whitesmoke]'
+        className='flex items-center space-x-2 p-2 mb-1 text-slate-500 pl-10 ease-in-out duration-300 focus:bg-[whitesmoke]'
       >
         <button className='text-xl'>{icon}</button>
         <span> {text}</span>

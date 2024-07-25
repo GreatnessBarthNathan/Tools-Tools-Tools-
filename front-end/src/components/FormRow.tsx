@@ -39,7 +39,7 @@ const FormRow = ({
         value={value}
         maxLength={maxLength}
         minLength={minLength}
-        className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0 ${extraStyle}`}
+        className={`border  w-full rounded p-2 mt-1 outline-0 ${extraStyle}`}
         onChange={onChange}
       />
     </div>

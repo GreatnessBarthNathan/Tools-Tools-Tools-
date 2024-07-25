@@ -6,7 +6,7 @@ function Landing() {
     <div className='w-[85%] h-[100dvh] m-auto flex py-5 overflow-auto'>
       {/* left part */}
       <div className='w-full lg:w-[50%]'>
-        <Logo container='w-[100px] md:w-[150px]' />
+        <Logo container='w-[100px] md:w-[150px] rounded-full overflow-hidden' />
         <div>
           <h1 className='text-2xl lg:text-5xl font-bold text-blue-900 mt-10'>
             Tools! <span className='text-cyan-500 capitalize'>Tools!!</span>{" "}

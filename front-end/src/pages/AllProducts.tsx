@@ -14,7 +14,6 @@ export const loader = async () => {
     return { worth, products }
   } catch (error) {
     console.log(error)
-    return error
   }
 }
 
@@ -54,7 +53,7 @@ function AllProducts() {
   }
 
   return (
-    <main>
+    <main className='pb-10'>
       <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>All Products</h1>
       <section className='bg-white p-2 py-5'>
         {/* WORTH */}

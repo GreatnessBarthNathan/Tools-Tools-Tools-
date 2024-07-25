@@ -10,6 +10,7 @@ export interface AuthenticatedRequest extends Request {
     userId: string
     userName: string
     role: string
+    approved: boolean
   }
 }
 
@@ -30,6 +31,7 @@ export const authenticateUser = (
     userId: payload._id,
     userName: payload.userName,
     role: payload.role,
+    approved: payload.approved,
   }
   next()
 }

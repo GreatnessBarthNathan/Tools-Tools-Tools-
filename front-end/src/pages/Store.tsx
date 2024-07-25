@@ -61,7 +61,7 @@ function Store() {
   return (
     <main>
       <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>Store</h1>
-      <section className='bg-white p-2 py-5'>
+      <section className='bg-[var(--bgColor)] p-2 py-5'>
         {/* WORTH */}
         {currentUser.role === "admin" && (
           <div className='text-right text-xs md:text-base'>

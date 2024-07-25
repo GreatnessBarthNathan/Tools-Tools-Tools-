@@ -6,17 +6,18 @@ import {
   updateExpense,
   deleteExpense,
 } from "../controllers/expenseControllers"
+import { permissions } from "../middleware/permissions"
 
 const router = Router()
 
-router.post("/", createExpense)
+router.post("/", permissions, createExpense)
 
 router.get("/", allExpenses)
 
-router.get("/:id", singleExpense)
+router.get("/:id", permissions, singleExpense)
 
-router.patch("/:id", updateExpense)
+router.patch("/:id", permissions, updateExpense)
 
-router.delete("/:id", deleteExpense)
+router.delete("/:id", permissions, deleteExpense)
 
 export default router

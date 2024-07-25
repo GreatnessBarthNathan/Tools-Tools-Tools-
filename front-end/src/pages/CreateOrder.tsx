@@ -15,9 +15,17 @@ import { useDashboardContext } from "./DashboardLayout"
 import { OrderItemsType, CustomerType } from "../utils/types"
 import OrderItems from "../components/OrderItems"
 import EditOrderPrice from "../components/EditOrderPrice"
+import TransactionDetails from "../components/TransactionDetails"
 
 type ValueTypes = {
   submitSearchOrderProduct: (e: FormEvent<HTMLFormElement>) => void
+  total: number
+  cash: number
+  bank: number
+  transaction: string
+  balance: number
+  setCash: React.Dispatch<React.SetStateAction<number>>
+  setBank: React.Dispatch<React.SetStateAction<number>>
   productNames: string[]
   orderItems: OrderItemsType[]
   increment: (id: string) => void
@@ -26,6 +34,9 @@ type ValueTypes = {
   openEditOrderPrice: (id: string) => void
   closeEditOrderPrice: () => void
   submitEditPriceForm: (e: FormEvent<HTMLFormElement>) => void
+  findCustomer: (e: ChangeEvent<HTMLInputElement>) => void
+  customerName: string
+  setTransaction: React.Dispatch<React.SetStateAction<string>>
 }
 
 const CreateOrderContext = createContext<ValueTypes | undefined>(undefined)
@@ -67,7 +78,8 @@ function CreateOrder() {
   const [editID, setEditID] = useState("")
   const [total, setTotal] = useState(0)
   const [transaction, setTransaction] = useState("cash")
-  const [deposit, setDeposit] = useState(0)
+  const [cash, setCash] = useState(0)
+  const [bank, setBank] = useState(0)
   const [balance, setBalance] = useState(0)
   const [customerName, setCustomerName] = useState("Anonymous")
   const [customer, setCustomer] = useState<CustomerType>({
@@ -195,11 +207,10 @@ function CreateOrder() {
       0
     )
     setTotal(orderTotal)
-
+ 
     // calculate the diff for items
     orderItems.forEach((item) => {
       item.diff = item.subTotal - item.cost * item.pcs
-      // return item
     })
   }
 
@@ -214,7 +225,7 @@ function CreateOrder() {
     if (transaction === "cash") {
       setBalance(0)
     } else {
-      setBalance(total - deposit)
+      setBalance(total - (cash + bank))
     }
   }
 
@@ -247,6 +258,16 @@ function CreateOrder() {
 
   // SUBMIT ORDER
   const submitOrder = async () => {
+    if (transaction === "cash" && cash + bank !== total) {
+      toast.error("Invalid calculation")
+      return
+    }
+
+    if (transaction === "credit" && cash + bank >= total) {
+      toast.error("Invalid calculation")
+      return
+    }
+
     if (customerName === "customer not found") {
       toast.error("please enter valid customer")
       return
@@ -258,7 +279,8 @@ function CreateOrder() {
     }
 
     setIsSubmitting(true)
-    const data = { items: orderItems, total, balance, customer }
+    const data = { items: orderItems, total, cash, bank, balance, customer }
+
     try {
       await customFetch.post("/order", data)
       toast.success("Order created")
@@ -274,8 +296,11 @@ function CreateOrder() {
   }
 
   useEffect(() => {
+    getTotal()
+  }, [orderItems])
+
+  useEffect(() => {
     const intervalID = setInterval(() => {
-      getTotal()
       getBalance()
     })
     return () => clearInterval(intervalID)
@@ -295,6 +320,16 @@ function CreateOrder() {
     openEditOrderPrice,
     closeEditOrderPrice,
     submitEditPriceForm,
+    total,
+    cash,
+    bank,
+    transaction,
+    balance,
+    setCash,
+    setBank,
+    findCustomer,
+    customerName,
+    setTransaction,
   }
   return (
     <CreateOrderContext.Provider value={values}>
@@ -329,77 +364,7 @@ function CreateOrder() {
             orderItems.length < 1 && "hidden"
           } grid grid-cols-3 gap-2 mt-5 border border-[whitesmoke] border-t-slate-600 pt-5`}
         >
-          {/* CASH & CREDIT SELECT */}
-          <div className='text-[8px] md:text-xs lg:text-base'>
-            <select
-              name='transaction'
-              id='transaction'
-              className='w-full p-1'
-              onChange={(e) => setTransaction(e.target.value)}
-            >
-              <option value='cash'>Cash</option>
-              <option value='credit'>Credit</option>
-            </select>
-          </div>
-
-          {/* CUSTOMERS */}
-          <div className='text-[8px] md:text-xs lg:text-base grid grid-rows-2 gap-1'>
-            <input
-              type='tel'
-              maxLength={11}
-              placeholder='customer phone number'
-              className='w-full p-1 '
-              onChange={findCustomer}
-            />
-            <input
-              type='text'
-              className='w-full p-1'
-              value={customerName}
-              readOnly
-            />
-          </div>
-
-          {/* TOTAL, DEPOSIT & BALANCE */}
-          <div className='text-[8px] md:text-xs lg:text-base font-bold p-1 bg-white'>
-            {/* TOTAL */}
-            <div className='grid grid-cols-2'>
-              <span>TOTAL</span>
-              <span>
-                {new Intl.NumberFormat("en-NG", {
-                  style: "currency",
-                  currency: "NGN",
-                }).format(total)}
-              </span>
-            </div>
-            <div
-              className={`${
-                transaction === "cash" ? "hidden" : "block"
-              } mt-1 bg-white`}
-            >
-              {/* DEPOSIT */}
-              <div className='grid grid-cols-2'>
-                <span>DEPOSIT</span>
-                <input
-                  type='number'
-                  // value={deposit}
-                  min={0}
-                  onChange={(e) => setDeposit(Number(e.target.value))}
-                  className='border'
-                />
-              </div>
-              {/* BALANCE*/}
-              <div className='grid grid-cols-2'>
-                <h2>BALANCE</h2>
-                <span>
-                  {" "}
-                  {new Intl.NumberFormat("en-NG", {
-                    style: "currency",
-                    currency: "NGN",
-                  }).format(balance)}
-                </span>
-              </div>
-            </div>
-          </div>
+          <TransactionDetails />
         </div>
 
         {/* CLEAR CART & SUBMIT BTNS */}

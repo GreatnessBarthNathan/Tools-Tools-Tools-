@@ -6,17 +6,18 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/productControllers"
+import { permissions } from "../middleware/permissions"
 
 const router = Router()
 
-router.post("/", createProduct)
+router.post("/", permissions, createProduct)
 
 router.get("/", getProducts)
 
-router.get("/:id", getSingleProduct)
+router.get("/:id", permissions, getSingleProduct)
 
-router.patch("/:id", updateProduct)
+router.patch("/:id", permissions, updateProduct)
 
-router.delete("/:id", deleteProduct)
+router.delete("/:id", permissions, deleteProduct)
 
 export default router

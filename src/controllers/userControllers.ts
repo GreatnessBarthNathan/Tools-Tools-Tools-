@@ -59,28 +59,6 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
   res.status(StatusCodes.OK).json({ updatedUser })
 }
 
-// FORGOT PASSWORD
-export const forgotPassword = async (
-  req: AuthenticatedRequest,
-  res: Response
-) => {
-  const { userName, password, confirmPassword } = req.body
-  if (!userName || !password || !confirmPassword)
-    throw new BadRequestError("Please provide all values")
-
-  const existingUser = await User.findOne({ userName })
-  if (!existingUser)
-    throw new NotFoundError("User does not exist. Create account.")
-
-  if (password !== confirmPassword)
-    throw new BadRequestError("Passwords must match")
-
-  req.body.password = await encode(password)
-  existingUser.password = req.body.password
-  await existingUser.save()
-  res.status(StatusCodes.OK).json({ msg: "Password changed. Login to account" })
-}
-
 // CHANGE PASSWORD
 export const changePassword = async (
   req: AuthenticatedRequest,
@@ -105,4 +83,26 @@ export const changePassword = async (
   await user.save()
 
   res.status(StatusCodes.OK).json({ msg: "Password changed" })
+}
+
+// APPROVE USER
+export const approveUser = async (req: AuthenticatedRequest, res: Response) => {
+  if (req.user?.role !== "admin")
+    throw new UnAuthorizedError("Unauthorized to perform this task")
+
+  const user = await User.findById(req.params.id)
+  if (!user) throw new NotFoundError("user not found")
+
+  let approval
+  if (user.approved === true) {
+    approval = false
+  } else {
+    approval = true
+  }
+
+  await User.findByIdAndUpdate(
+    req.params.id,
+    { approved: approval },
+    { runValidators: true, new: true }
+  )
 }

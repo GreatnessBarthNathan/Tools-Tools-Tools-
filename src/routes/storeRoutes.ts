@@ -4,13 +4,14 @@ import {
   createStoreProduct,
   updateStore,
 } from "../controllers/storeControllers"
+import { permissions } from "../middleware/permissions"
 
 const router = Router()
 
-router.post("/", createStoreProduct)
+router.post("/", permissions, createStoreProduct)
 
 router.get("/", calcStoreWorth)
 
-router.patch("/:id", updateStore)
+router.patch("/:id", permissions, updateStore)
 
 export default router

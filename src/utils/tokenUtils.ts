@@ -5,6 +5,7 @@ type Payload = {
   _id: mongoose.Types.ObjectId
   userName: string
   role: string
+  approved: boolean
 }
 
 export const createJwt = (payload: Payload) => {
