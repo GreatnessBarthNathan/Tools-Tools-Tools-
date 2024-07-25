@@ -15,6 +15,7 @@ res, next) => {
         userId: payload._id,
         userName: payload.userName,
         role: payload.role,
+        approved: payload.approved,
     };
     next();
 };

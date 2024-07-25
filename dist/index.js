@@ -44,6 +44,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const path_1 = __importDefault(require("path"));
 const morgan_1 = __importDefault(require("morgan"));
 const helmet_1 = __importDefault(require("helmet"));
+const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 const app = (0, express_1.default)();
 // middlewares
 const notFound_1 = __importDefault(require("./middleware/notFound"));
@@ -57,6 +58,8 @@ const orderRoutes_1 = __importDefault(require("./routes/orderRoutes"));
 const expenseRoutes_1 = __importDefault(require("./routes/expenseRoutes"));
 const storeRoutes_1 = __importDefault(require("./routes/storeRoutes"));
 const customerRoutes_1 = __importDefault(require("./routes/customerRoutes"));
+const cashRoutes_1 = __importDefault(require("./routes/cashRoutes"));
+const bankRoutes_1 = __importDefault(require("./routes/bankRoutes"));
 if (process.env.NODE_ENV === "development") {
     app.use((0, morgan_1.default)("dev"));
 }
@@ -64,6 +67,7 @@ app.use(express_1.default.static(path_1.default.resolve(__dirname, "./public")))
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use((0, helmet_1.default)());
+app.use((0, express_mongo_sanitize_1.default)());
 app.use("/api/v1/auth", authRoutes_1.default);
 app.use("/api/v1/user", authMiddleware_1.authenticateUser, userRoutes_1.default);
 app.use("/api/v1/product", authMiddleware_1.authenticateUser, productRoutes_1.default);
@@ -71,12 +75,11 @@ app.use("/api/v1/order", authMiddleware_1.authenticateUser, orderRoutes_1.defaul
 app.use("/api/v1/expense", authMiddleware_1.authenticateUser, expenseRoutes_1.default);
 app.use("/api/v1/store", authMiddleware_1.authenticateUser, storeRoutes_1.default);
 app.use("/api/v1/customer", authMiddleware_1.authenticateUser, customerRoutes_1.default);
+app.use("/api/v1/cash", authMiddleware_1.authenticateUser, cashRoutes_1.default);
+app.use("/api/v1/bank", authMiddleware_1.authenticateUser, bankRoutes_1.default);
 app.get("*", (req, res) => {
     res.sendFile(path_1.default.resolve(__dirname, "./public", "index.html"));
 });
-// app.use("*", (req, res) => {
-//   res.status(404).json({ msg: "not found" })
-// })
 app.use(notFound_1.default);
 app.use(errorHandler_1.default);
 const port = process.env.PORT || 4000;

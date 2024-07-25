@@ -21,6 +21,7 @@ const UserSchema = new mongoose_1.default.Schema({
     userName: {
         type: String,
         unique: true,
+        trim: true,
         required: true,
         minlength: 3,
         maxlength: 20,
@@ -29,6 +30,11 @@ const UserSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
         minlength: 3,
+        trim: true,
+    },
+    approved: {
+        type: Boolean,
+        default: false,
     },
     role: {
         type: String,

@@ -20,10 +20,12 @@ const userModel_1 = __importDefault(require("../models/userModel"));
 const expensesModel_1 = __importDefault(require("../models/expensesModel"));
 const http_status_codes_1 = require("http-status-codes");
 const dayjs_1 = __importDefault(require("dayjs"));
+const cashModel_1 = __importDefault(require("../models/cashModel"));
+const bankModel_1 = __importDefault(require("../models/bankModel"));
 // CREATE ORDER
 const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const { total, items, balance, customer } = req.body;
+    var _a, _b, _c;
+    const { total, items, balance, cash, bank, customer } = req.body;
     if (!total || !items)
         throw new customErrors_1.NotFoundError("Missing fields");
     req.body.enteredAt = (0, dayjs_1.default)(new Date(Date.now())).format("YYYY-MM-DD");
@@ -41,31 +43,31 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         total,
         orderItems,
         balance,
+        cash,
+        bank,
         userId: (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId,
         customer,
         enteredAt: req.body.enteredAt,
     });
+    if (cash > 0) {
+        yield cashModel_1.default.create({
+            amount: cash,
+            enteredBy: (_b = req.user) === null || _b === void 0 ? void 0 : _b.userName,
+            enteredAt: req.body.enteredAt,
+        });
+    }
+    if (bank > 0) {
+        yield bankModel_1.default.create({
+            amount: bank,
+            enteredBy: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userName,
+            enteredAt: req.body.enteredAt,
+        });
+    }
     res.status(http_status_codes_1.StatusCodes.CREATED).json({ msg: "Order Created" });
 });
 exports.createOrder = createOrder;
 // GET ALL ORDERS
 const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const { from, to } = req.query
-    // const queryObject: { enteredAt: { $gte: string; $lte: string } } = {
-    //   enteredAt: {
-    //     $gte: dayjs(new Date(Date.now())).format("YYYY-MM-DD"),
-    //     $lte: dayjs(new Date(Date.now())).format("YYYY-MM-DD"),
-    //   },
-    // }
-    // if (from && to) {
-    //   queryObject.enteredAt = { $gte: from as string, $lte: to as string }
-    //   const orders = await Order.find(queryObject)
-    //   res.status(StatusCodes.OK).json({ count: orders.length, orders })
-    //   return
-    // } else {
-    //   const orders = await Order.find({})
-    //   res.status(StatusCodes.OK).json({ count: orders.length, orders })
-    // }
     const orders = yield orderModel_1.default.find({}).sort({ enteredAt: -1 });
     res.status(http_status_codes_1.StatusCodes.OK).json({ count: orders.length, orders });
 });
@@ -83,8 +85,8 @@ const singleOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.singleOrder = singleOrder;
 // DELETE ORDER .... THIS WILL NOT BE CARRIED OUT THOUGH
 const deleteOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    if (((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "admin")
+    var _d;
+    if (((_d = req.user) === null || _d === void 0 ? void 0 : _d.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Not Permitted");
     const order = yield orderModel_1.default.findOne({ _id: req.params.id });
     if (!order)
@@ -102,8 +104,8 @@ const deleteOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.deleteOrder = deleteOrder;
 // RETURN ITEM
 const returnItem = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    if (((_c = req.user) === null || _c === void 0 ? void 0 : _c.role) !== "admin")
+    var _e;
+    if (((_e = req.user) === null || _e === void 0 ? void 0 : _e.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Not permitted");
     const { orderId, itemId } = req.query;
     if (!orderId || !itemId)
@@ -146,9 +148,9 @@ const updateOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.updateOrder = updateOrder;
 // CALCULATE PROFIT
 const getProfit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _f;
     let grossProfit = 0;
-    if (((_d = req.user) === null || _d === void 0 ? void 0 : _d.role) !== "admin")
+    if (((_f = req.user) === null || _f === void 0 ? void 0 : _f.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Not permitted to perform this task");
     const orders = yield orderModel_1.default.find({});
     for (let order of orders) {
