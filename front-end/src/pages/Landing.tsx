@@ -8,8 +8,9 @@ function Landing() {
       <div className='w-full lg:w-[50%]'>
         <Logo container='w-[100px] md:w-[150px] rounded-full overflow-hidden' />
         <div>
-          <h1 className='text-2xl lg:text-5xl font-bold text-blue-900 mt-10'>
-            Tools! <span className='text-cyan-500 capitalize'>Tools!!</span>{" "}
+          <h1 className='text-2xl lg:text-5xl font-bold text-[var(--primary)] mt-10'>
+            Tools!{" "}
+            <span className='text-[var(--hoverColor)] capitalize'>Tools!!</span>{" "}
             Tools!!!
           </h1>
 
@@ -25,13 +26,13 @@ function Landing() {
           <div className='mt-10'>
             <Link
               to='/register'
-              className='bg-cyan-500 py-2 px-4 rounded text-white text-lg mr-4 hover:bg-cyan-800 ease-in-out duration-300'
+              className='bg-[var(--primary)] py-2 px-4 rounded text-white text-lg mr-4 hover:bg-[var(--hoverColor)] ease-in-out duration-300'
             >
               Create Account
             </Link>
             <Link
               to='/login'
-              className='bg-cyan-500 py-2 px-4 rounded text-white text-lg hover:bg-cyan-800 ease-in-out duration-300'
+              className='bg-[var(--primary)] py-2 px-4 rounded text-white text-lg hover:bg-[var(--hoverColor)] ease-in-out duration-300'
             >
               Login
             </Link>
