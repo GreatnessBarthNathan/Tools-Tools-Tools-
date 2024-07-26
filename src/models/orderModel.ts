@@ -39,6 +39,8 @@ const OrderSchema = new mongoose.Schema({
   },
   orderItems: [SingleOrderItemSchema],
   balance: Number,
+  cash: Number,
+  bank: Number,
   customer: {
     firstName: String,
     lastName: String,
