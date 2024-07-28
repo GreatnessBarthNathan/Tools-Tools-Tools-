@@ -31,7 +31,7 @@ function Register() {
   return (
     <div className='pb-[3rem] w-full h-full overflow-auto'>
       <div className='bg-white w-[90%] m-auto mt-[50px] rounded border-t-4 border-[var(--primary)] p-5 shadow-md shadow-slate-300 md:w-[50%] lg:w-[40%]'>
-        <Logo container='w-[100px] m-auto mb-2' />
+        <Logo container='w-[100px] m-auto mb-2 rounded-full overflow-hidden' />
         <h2 className='text-center text-xl mb-10'>Register</h2>
         <form onSubmit={handleSubmit}>
           <FormRow
