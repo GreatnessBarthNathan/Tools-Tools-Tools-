@@ -1,5 +1,12 @@
-import { useEffect, useState, FormEvent } from "react"
-
+import {
+  useEffect,
+  useState,
+  FormEvent,
+  createContext,
+  useContext,
+  Dispatch,
+  SetStateAction,
+} from "react"
 import { useDashboardContext } from "./DashboardLayout"
 import SearchOrderForm from "../components/SearchOrderForm"
 import SingleOrder from "../components/SingleOrder"
@@ -10,6 +17,22 @@ import axios from "axios"
 import { toast } from "react-toastify"
 import { AnalysisType } from "../utils/types"
 import Analysis from "../components/Analysis"
+import ReturnItemModal from "../components/modals/ReturnItemModal"
+import customFetch from "../utils/customFetch"
+
+type IDType = {
+  orderId: string
+  itemId: string
+}
+type ValueTypes = {
+  showReturnItemModal: boolean
+  setShowReturnItemModal: Dispatch<SetStateAction<boolean>>
+  IDs: IDType
+  setIDs: Dispatch<SetStateAction<IDType>>
+  returnItem: () => void
+}
+
+const OrderContext = createContext<ValueTypes | undefined>(undefined)
 
 function AllOrders() {
   const { fetchOrders, fetchExpenses } = useDashboardContext()
@@ -26,6 +49,8 @@ function AllOrders() {
     totalCash: 0,
     totalBank: 0,
   })
+  const [showReturnItemModal, setShowReturnItemModal] = useState(false)
+  const [IDs, setIDs] = useState<IDType>({ orderId: "", itemId: "" })
 
   // GET ORDERS
   const getOrders = async () => {
@@ -150,6 +175,24 @@ function AllOrders() {
     setAnalysis(analysis)
   }
 
+  // RETURN ITEM
+  const returnItem = async () => {
+    try {
+      await customFetch.get(
+        `/order/return-item?orderId=${IDs.orderId}&&itemId=${IDs.itemId}`
+      )
+      location.reload()
+      toast.success("Item successfully returned")
+      setIDs({ orderId: "", itemId: "" })
+      setShowReturnItemModal(false)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+        setShowReturnItemModal(false)
+      }
+    }
+  }
+
   useEffect(() => {
     getOrders()
   }, [])
@@ -157,44 +200,65 @@ function AllOrders() {
   useEffect(() => {
     calculateProfit()
   }, [orders, displayedExpenses, date])
+
+  const values = {
+    showReturnItemModal,
+    setShowReturnItemModal,
+    IDs,
+    setIDs,
+    returnItem,
+  }
+
   return (
-    <main>
-      <div className='flex justify-between'>
-        <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>Orders</h1>
-        <Analysis analysis={analysis} />
-      </div>
-      <section className='pb-5'>
-        <div className='bg-white p-2 rounded-md py-3 shadow'>
-          <SearchOrderForm searchOrders={searchOrders} />
+    <OrderContext.Provider value={values}>
+      <main>
+        <div className='flex justify-between'>
+          <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>Orders</h1>
+          <Analysis analysis={analysis} />
         </div>
-        <h1 className='mt-5 text-xs md:text-sm lg:text-base'>
-          Showing{" "}
-          <span className='text-blue-800 font-semibold'>
-            {orders.length} Result{orders.length > 1 && "s"}
-          </span>{" "}
-          for <span className='text-blue-800 font-semibold'>{date}</span>
-        </h1>
-        {loading ? (
-          <Loading />
-        ) : (
-          <>
-            {/* HEADER */}
-            {orders.length < 1 ? (
-              <h1 className='text-center font-bold'>No orders available</h1>
-            ) : (
-              <>
-                <div>
-                  {orders?.map((order) => {
-                    return <SingleOrder key={order._id} {...order} />
-                  })}
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </section>
-    </main>
+        <section className='pb-5'>
+          <div className='bg-white p-2 rounded-md py-3 shadow'>
+            <SearchOrderForm searchOrders={searchOrders} />
+          </div>
+          <h1 className='mt-5 text-xs md:text-sm lg:text-base'>
+            Showing{" "}
+            <span className='text-blue-800 font-semibold'>
+              {orders.length} Result{orders.length > 1 && "s"}
+            </span>{" "}
+            for <span className='text-blue-800 font-semibold'>{date}</span>
+          </h1>
+          {loading ? (
+            <Loading />
+          ) : (
+            <>
+              {/* HEADER */}
+              {orders.length < 1 ? (
+                <h1 className='text-center font-bold'>No orders available</h1>
+              ) : (
+                <>
+                  <div>
+                    {orders?.map((order) => {
+                      return <SingleOrder key={order._id} {...order} />
+                    })}
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </section>
+        {showReturnItemModal && <ReturnItemModal />}
+      </main>
+    </OrderContext.Provider>
   )
+}
+
+export const useOrderContext = () => {
+  const context = useContext(OrderContext)
+  if (context === undefined)
+    throw new Error(
+      "useOrderContext must be used within Order Context Provider"
+    )
+  return context
 }
 
 export default AllOrders

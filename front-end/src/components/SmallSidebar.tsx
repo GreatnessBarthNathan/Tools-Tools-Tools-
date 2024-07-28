@@ -29,10 +29,7 @@ const SmallSidebar = () => {
               className='ml-auto mr-auto w-3/4 mt-[100px] md:w-1/2'
               onClick={() => setShowSidebar(false)}
             >
-              <Logo
-                container='w-[30%] m-auto mb-[30px] rounded-full overflow-hidden'
-                image='w-full'
-              />
+              <Logo container='w-[30%] m-auto mb-[30px]' image='w-full' />
               <PageLink url='' text='Create Order' icon={<CiShoppingCart />} />
               <PageLink
                 url='orders'

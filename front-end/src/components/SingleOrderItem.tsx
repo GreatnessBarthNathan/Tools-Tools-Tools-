@@ -1,8 +1,8 @@
 import { OrderItemsType } from "../utils/types"
 import { BsArrowReturnLeft } from "react-icons/bs"
-import customFetch from "../utils/customFetch"
-import { toast } from "react-toastify"
 import { useDashboardContext } from "../pages/DashboardLayout"
+import { useOrderContext } from "../pages/AllOrders"
+
 
 function SingleOrderItem({
   name,
@@ -10,36 +10,13 @@ function SingleOrderItem({
   pcs,
   subTotal,
   returned,
-  productId,
   orderId,
   _id,
 }: OrderItemsType) {
   const { currentUser } = useDashboardContext()
+  const { setShowReturnItemModal, setIDs, IDs } = useOrderContext()
 
-  // RETURN ITEM
-  const returnItem = async (orderId: string, id: string) => {
-    const {
-      data: { product },
-    } = await customFetch.get(`/product/${id}`)
-
-    const userInput = prompt(
-      `please type "${product.name}" to return this item`
-    )
-    if (userInput !== null && userInput === product.name) {
-      try {
-        await customFetch.get(
-          `/order/return-item?orderId=${orderId}&&itemId=${_id}`
-        )
-        location.reload()
-        toast.success("Item successfully returned")
-      } catch (error) {
-        console.log(error)
-      }
-    } else {
-      toast.error("Please follow the right instructions")
-      return
-    }
-  }
+  
   return (
     <div
       className={`grid grid-cols-10 gap-2 ${
@@ -65,7 +42,14 @@ function SingleOrderItem({
       <div className='col-span-2 p-2 flex justify-between items-center text-[8px] space-x-1 md:text-base'>
         <h2>{returned ? "true" : "false"}</h2>
         <button
-          onClick={() => returnItem(orderId as string, productId as string)}
+          onClick={() => {
+            setShowReturnItemModal(true)
+            setIDs({
+              ...IDs,
+              orderId: String(orderId),
+              itemId: _id as string,
+            })
+          }}
         >
           {currentUser.role === "admin" && <BsArrowReturnLeft />}
         </button>
