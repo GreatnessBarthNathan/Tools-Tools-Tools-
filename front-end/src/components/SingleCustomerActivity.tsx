@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react"
 import { OrderType } from "../utils/types"
-import SingleOrderItem from "./SingleOrderItem"
 import OrderTableHead from "./OrderTableHead"
 import OrderFooter from "./OrderFooter"
 import customFetch from "../utils/customFetch"
+import { useDashboardContext } from "../pages/DashboardLayout"
+import { BsArrowReturnLeft } from "react-icons/bs"
+import CustomerActivityReturnModal from "./modals/CustomerActivityReturnModal"
+import { toast } from "react-toastify"
+import axios from "axios"
 
 function SingleCustomerActivity({
   _id,
@@ -12,9 +16,12 @@ function SingleCustomerActivity({
   orderItems,
   balance,
 }: OrderType) {
+  const { currentUser } = useDashboardContext()
   const editedDate = new Date(enteredAt)
   const [soldBy, setSoldBy] = useState("")
   const [showMore, setShowMore] = useState(false)
+  const [showReturnItemModal, setShowReturnItemModal] = useState(false)
+  const [IDs, setIDs] = useState({ orderId: "", itemId: "" })
 
   const getSoldBy = async () => {
     try {
@@ -24,6 +31,24 @@ function SingleCustomerActivity({
       setSoldBy(soldBy)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  // RETURN ITEM
+  const returnItem = async () => {
+    try {
+      await customFetch.get(
+        `/order/return-item?orderId=${IDs.orderId}&&itemId=${IDs.itemId}`
+      )
+      location.reload()
+      toast.success("Item successfully returned")
+      setIDs({ orderId: "", itemId: "" })
+      setShowReturnItemModal(false)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+        setShowReturnItemModal(false)
+      }
     }
   }
 
@@ -80,9 +105,47 @@ function SingleCustomerActivity({
         <OrderTableHead />
 
         <div className='bg-white rounded-md shadow-md'>
-          {orderItems.map((item) => (
-            <SingleOrderItem key={item.productId} {...item} orderId={_id} />
-          ))}
+          {orderItems.map((item) => {
+            return (
+              <div
+                className={`grid grid-cols-10 gap-2 ${
+                  item.returned ? "bg-red-100 text-slate-500" : "bg-white"
+                }`}
+              >
+                <h2 className='col-span-3 p-2 capitalize text-[8px] md:text-base'>
+                  {item.name}
+                </h2>
+                <h2 className='p-2 text-[8px] md:text-base'>{item.pcs}</h2>
+                <h2 className='col-span-2 p-2 text-[8px] md:text-base'>
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  }).format(item.price)}
+                </h2>
+                <h2 className='col-span-2 p-2 text-[8px] md:text-base'>
+                  {new Intl.NumberFormat("en-NG", {
+                    style: "currency",
+                    currency: "NGN",
+                  }).format(item.subTotal)}
+                </h2>
+                <div className='col-span-2 p-2 flex justify-between items-center text-[8px] space-x-1 md:text-base'>
+                  <h2>{item.returned ? "true" : "false"}</h2>
+                  <button
+                    onClick={() => {
+                      setShowReturnItemModal(true)
+                      setIDs({
+                        ...IDs,
+                        orderId: _id,
+                        itemId: item._id as string,
+                      })
+                    }}
+                  >
+                    {currentUser.role === "admin" && <BsArrowReturnLeft />}
+                  </button>
+                </div>
+              </div>
+            )
+          })}
         </div>
 
         <OrderFooter
@@ -92,6 +155,13 @@ function SingleCustomerActivity({
           _id={_id}
         />
       </section>
+
+      {showReturnItemModal && (
+        <CustomerActivityReturnModal
+          returnItem={returnItem}
+          setShowReturnItemModal={setShowReturnItemModal}
+        />
+      )}
     </main>
   )
 }
