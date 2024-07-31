@@ -18,6 +18,8 @@ export type ProductTypes = {
   qty: number
   store: number
   userId: string
+  minimumQty?: number
+  maximumQty?: number
 }
 
 export type WorthType = {
@@ -42,7 +44,7 @@ export type OrderItemsType = {
   subTotal: number
   returned: boolean
   diff: number
-  productId: string
+  productId?: string
   _id?: string
   orderId?: string
 }

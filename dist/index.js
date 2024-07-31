@@ -80,6 +80,9 @@ app.use("/api/v1/bank", authMiddleware_1.authenticateUser, bankRoutes_1.default)
 app.get("*", (req, res) => {
     res.sendFile(path_1.default.resolve(__dirname, "./public", "index.html"));
 });
+// app.use("*", (req, res) => {
+//   res.status(404).json({ msg: "not found" })
+// })
 app.use(notFound_1.default);
 app.use(errorHandler_1.default);
 const port = process.env.PORT || 4000;

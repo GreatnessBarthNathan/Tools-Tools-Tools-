@@ -3,7 +3,7 @@ import { useDashboardContext } from "./DashboardLayout"
 import { OrderItemsType, OrderType } from "../utils/types"
 import SearchHistoryForm from "../components/SearchHistoryForm"
 import Loading from "../components/Loading"
-import SingleOrder from "../components/SingleOrder"
+import SingleCustomerActivity from "../components/SingleCustomerActivity"
 
 function History() {
   const { fetchOrders, products } = useDashboardContext()
@@ -110,7 +110,7 @@ function History() {
               <>
                 <div>
                   {orders?.map((order) => {
-                    return <SingleOrder key={order._id} {...order} />
+                    return <SingleCustomerActivity key={order._id} {...order} />
                   })}
                 </div>
               </>

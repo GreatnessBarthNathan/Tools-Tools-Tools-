@@ -32,6 +32,7 @@ function SingleOrder({
   useEffect(() => {
     getSoldBy()
   }, [])
+
   return (
     <main className='mt-3'>
       {/* Heading */}
@@ -48,7 +49,7 @@ function SingleOrder({
           showMore
             ? "h-[160px] md:h-[200px] overflow-auto ease-in-out duration-300"
             : "h-0 overflow-auto ease-in-out duration-300"
-        } ease-in-out duration-200`}
+        } ease-in-out duration-200 `}
       >
         <OrderTableHead />
 

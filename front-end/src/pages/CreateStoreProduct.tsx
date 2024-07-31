@@ -35,7 +35,7 @@ function CreateStoreProduct() {
   return (
     <main className='py-5'>
       <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
-        New Store Product
+        New Warehouse Product
       </h1>
       <section className='bg-[var(--bgColor)] px-2 py-5 rounded-md'>
         <form
@@ -65,7 +65,7 @@ function CreateStoreProduct() {
               isSubmitting === "submitting" && "cursor-wait"
             }`}
           >
-            Add To Store
+            Add To Warehouse
           </button>
         </form>
       </section>

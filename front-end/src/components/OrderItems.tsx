@@ -15,7 +15,7 @@ function OrderItems({ productId, name, price, subTotal, pcs }: OrderItemsType) {
       </h2>
       <h2
         className='cursor-pointer hover:bg-blue-200 hover:text-white text-[8px] md:text-xs lg:text-base'
-        onClick={() => openEditOrderPrice(productId)}
+        onClick={() => openEditOrderPrice(productId as string)}
       >
         {new Intl.NumberFormat("en-NG", {
           style: "currency",
@@ -23,11 +23,11 @@ function OrderItems({ productId, name, price, subTotal, pcs }: OrderItemsType) {
         }).format(price)}
       </h2>
       <div className='grid grid-cols-5 items-center text-[8px] md:text-xs lg:text-base'>
-        <button onClick={() => decrement(productId)}>
+        <button onClick={() => decrement(productId as string)}>
           <FaMinus />
         </button>
         <h2 className='font-bold bg-white'>{pcs}</h2>
-        <button onClick={() => increment(productId)}>
+        <button onClick={() => increment(productId as string)}>
           <FaPlus />
         </button>
       </div>
@@ -39,7 +39,10 @@ function OrderItems({ productId, name, price, subTotal, pcs }: OrderItemsType) {
           }).format(subTotal)}
         </h2>
 
-        <button className='text-red-700' onClick={() => deleteItem(productId)}>
+        <button
+          className='text-red-700'
+          onClick={() => deleteItem(productId as string)}
+        >
           <FaTrash />
         </button>
       </div>

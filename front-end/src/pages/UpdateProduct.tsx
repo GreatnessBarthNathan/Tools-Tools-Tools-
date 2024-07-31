@@ -37,6 +37,8 @@ function UpdateProduct() {
     qty: product.qty,
     add: 0,
     newQty: 0,
+    minimumQty: product.minimumQty,
+    maximumQty: product.maximumQty,
   })
 
   const [isSubmitting, setIsSubmitting] = useState("")
@@ -49,11 +51,8 @@ function UpdateProduct() {
   }
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      getNewQty()
-    }, 500)
-    return () => clearTimeout(timeoutId)
-  })
+    getNewQty()
+  }, [targetProduct.qty, targetProduct.add])
 
   // submit form
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -140,6 +139,40 @@ function UpdateProduct() {
                 setTargetProduct({
                   ...targetProduct,
                   SP: Number(e.target.value),
+                })
+              }
+            />
+          </div>
+          <div className='w-full mt-3'>
+            <label className='capitalize block'>minimum quantity</label>
+            <input
+              type='number'
+              name='minimumQty'
+              required
+              value={targetProduct.minimumQty}
+              min={0}
+              className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
+              onChange={(e) =>
+                setTargetProduct({
+                  ...targetProduct,
+                  minimumQty: Number(e.target.value),
+                })
+              }
+            />
+          </div>
+          <div className='w-full mt-3'>
+            <label className='capitalize block'>maximum quantity</label>
+            <input
+              type='number'
+              name='maximumQty'
+              required
+              value={targetProduct.maximumQty}
+              min={0}
+              className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
+              onChange={(e) =>
+                setTargetProduct({
+                  ...targetProduct,
+                  maximumQty: Number(e.target.value),
                 })
               }
             />

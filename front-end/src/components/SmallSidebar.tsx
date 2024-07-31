@@ -1,11 +1,16 @@
 import { useDashboardContext } from "../pages/DashboardLayout"
 import PageLink from "./PageLinks"
-import { FaSitemap, FaShoppingBasket, FaTimes } from "react-icons/fa"
+import {
+  FaSitemap,
+  FaShoppingBasket,
+  FaTimes,
+  FaWarehouse,
+} from "react-icons/fa"
 import { MdSettings, MdOutlineCreateNewFolder, MdHistory } from "react-icons/md"
 import { HiOutlineCash } from "react-icons/hi"
 import { CgProfile } from "react-icons/cg"
-import { CiShoppingCart } from "react-icons/ci"
-import { AiFillAppstore, AiOutlineBank } from "react-icons/ai"
+import { CiShoppingCart, CiViewList } from "react-icons/ci"
+import { AiOutlineBank } from "react-icons/ai"
 import { GiExpense } from "react-icons/gi"
 import { IoIosPeople } from "react-icons/io"
 import { TbLockCheck } from "react-icons/tb"
@@ -49,7 +54,7 @@ const SmallSidebar = () => {
                 text='All Products'
                 icon={<FaSitemap />}
               />
-              <PageLink url={`store`} text='Store' icon={<AiFillAppstore />} />
+              <PageLink url={`store`} text='Warehouse' icon={<FaWarehouse />} />
               <PageLink url='expenses' text='Expenses' icon={<GiExpense />} />
               <PageLink url='history' text='History' icon={<MdHistory />} />
               <PageLink
@@ -66,6 +71,11 @@ const SmallSidebar = () => {
                 url='customers'
                 text='Customers'
                 icon={<IoIosPeople />}
+              />
+              <PageLink
+                url='purchase-list'
+                text='Purchase List'
+                icon={<CiViewList />}
               />
               {currentUser.role === "admin" && (
                 <PageLink

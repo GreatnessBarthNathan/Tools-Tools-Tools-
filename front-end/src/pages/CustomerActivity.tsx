@@ -67,12 +67,6 @@ function CustomerActivity() {
         }).format(customerDebt)}
       </h2>
 
-      {/* <div className='grid grid-cols-4 gap-2 text-left border border-b-slate-600 font-bold bg-white text-[8px] md:text-base'>
-        <h2 className='col-span-1 p-2'>Date</h2>
-        <h2 className='col-span-1 p-2'>Items</h2>
-        <h2 className='p-2'>Total Amount</h2>
-        <h2 className='col-span-1 p-2'>Balance</h2>
-      </div> */}
       {customerOrders.length < 1 ? (
         <h1 className='text-center font-bold mt-5'>No activities</h1>
       ) : (

@@ -26,6 +26,7 @@ import Cash from "./pages/Cash"
 import Bank from "./pages/Bank"
 import RecordCash from "./pages/RecordCash"
 import RecordBank from "./pages/RecordBank"
+import PurchaseList from "./pages/PurchaseList"
 
 // loaders
 import { loader as dashboardLoader } from "./pages/DashboardLayout"
@@ -143,6 +144,10 @@ const router = createBrowserRouter([
           {
             path: "history",
             element: <History />,
+          },
+          {
+            path: "purchase-list",
+            element: <PurchaseList />,
           },
           { path: "permissions", element: <Permissions /> },
           {

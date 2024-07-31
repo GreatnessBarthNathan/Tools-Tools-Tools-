@@ -51,6 +51,10 @@ app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./public", "index.html"))
 })
 
+// app.use("*", (req, res) => {
+//   res.status(404).json({ msg: "not found" })
+// })
+
 app.use(notFoundError)
 
 app.use(errorHandler)

@@ -55,7 +55,9 @@ function OrderHeader({
         className={`p-1 md:p-2 ${
           showMore ? "text-red-700" : "text-blue-500"
         } hover:text-blue-700`}
-        onClick={() => setShowMore(!showMore)}
+        onClick={() => {
+          setShowMore(!showMore)
+        }}
       >
         {showMore ? "close" : "view"}
       </button>

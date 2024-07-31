@@ -42,7 +42,24 @@ function CreateProduct() {
           <FormRow type='number' labelText='quantity' name='qty' required />
           <FormRow type='number' labelText='cost price' name='CP' required />
           <FormRow type='number' labelText='selling price' name='SP' required />
-          <FormRow type='number' labelText='store' name='store' required />
+          <FormRow
+            type='number'
+            labelText='minimum quantity'
+            name='minimumQty'
+            required
+          />
+          <FormRow
+            type='number'
+            labelText='maximum quantity'
+            name='maximumQty'
+            required
+          />
+          <FormRow
+            type='number'
+            labelText='warehouse quantity'
+            name='store'
+            required
+          />
           <button
             type='submit'
             className={`bg-[var(--primary)] p-3 rounded text-white hover:bg-[var(--hoverColor)] ease-in-out duration-300 self-end ${

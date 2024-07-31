@@ -53,3 +53,8 @@ body {
   border-radius: 50%;
   animation: spinner 0.5s linear infinite;
 }
+
+#order-detail {
+  /* height: 0; */
+  overflow: hidden;
+}

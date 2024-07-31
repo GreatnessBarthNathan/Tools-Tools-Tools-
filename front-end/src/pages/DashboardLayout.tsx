@@ -20,7 +20,7 @@ type ValueTypes = {
   currentUser: UserTypes
   allProducts: ProductTypes[]
   products: ProductTypes[]
-  getProducts: () => void
+  getProducts: () => Promise<ProductTypes[]>
   submitting: boolean
   logout: () => void
   fetchExpenses: () => Promise<ExpenseType[]>
@@ -132,8 +132,11 @@ function DashboardLayout() {
       } = await customFetch.get("/product")
 
       setProducts(products)
+      return products
     } catch (error) {
-      console.log(error)
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+      }
     }
   }
 
