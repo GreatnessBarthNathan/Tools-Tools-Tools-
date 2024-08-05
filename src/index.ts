@@ -26,6 +26,7 @@ import storeRouter from "./routes/storeRoutes"
 import customerRouter from "./routes/customerRoutes"
 import cashRouter from "./routes/cashRoutes"
 import bankRouter from "./routes/bankRoutes"
+import categoryRouter from "./routes/categoryRoutes"
 
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"))
@@ -46,6 +47,7 @@ app.use("/api/v1/store", authenticateUser, storeRouter)
 app.use("/api/v1/customer", authenticateUser, customerRouter)
 app.use("/api/v1/cash", authenticateUser, cashRouter)
 app.use("/api/v1/bank", authenticateUser, bankRouter)
+app.use("/api/v1/category", authenticateUser, categoryRouter)
 
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./public", "index.html"))

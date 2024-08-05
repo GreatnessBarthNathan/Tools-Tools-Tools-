@@ -6,12 +6,13 @@ import {
   useContext,
   Dispatch,
   SetStateAction,
+  ChangeEvent,
 } from "react"
 import { useDashboardContext } from "./DashboardLayout"
 import SearchOrderForm from "../components/SearchOrderForm"
 import SingleOrder from "../components/SingleOrder"
 import Loading from "../components/Loading"
-import { ExpenseType, OrderType } from "../utils/types"
+import { ExpenseType, OrderType, UserTypes } from "../utils/types"
 import dayjs from "dayjs"
 import axios from "axios"
 import { toast } from "react-toastify"
@@ -19,6 +20,7 @@ import { AnalysisType } from "../utils/types"
 import Analysis from "../components/Analysis"
 import ReturnItemModal from "../components/modals/ReturnItemModal"
 import customFetch from "../utils/customFetch"
+import Filter from "../components/Filter"
 
 type IDType = {
   orderId: string
@@ -35,7 +37,9 @@ type ValueTypes = {
 const OrderContext = createContext<ValueTypes | undefined>(undefined)
 
 function AllOrders() {
-  const { fetchOrders, fetchExpenses } = useDashboardContext()
+  const { fetchOrders, fetchExpenses, currentUser, fetchUsers } =
+    useDashboardContext()
+  const [allOrders, setAllOrders] = useState<OrderType[]>([])
   const [orders, setOrders] = useState<OrderType[]>([])
   const [loading, setLoading] = useState(false)
   const [date, setDate] = useState("")
@@ -51,7 +55,9 @@ function AllOrders() {
   })
   const [showReturnItemModal, setShowReturnItemModal] = useState(false)
   const [IDs, setIDs] = useState<IDType>({ orderId: "", itemId: "" })
-
+  const [filterBtns, setFilterBtns] = useState<string[]>([])
+  const [users, setUsers] = useState<UserTypes[]>([])
+  console.log(orders)
   // GET ORDERS
   const getOrders = async () => {
     setLoading(true)
@@ -66,13 +72,27 @@ function AllOrders() {
     try {
       // orders
       const orders = await fetchOrders()
-      const todayOrders = orders.filter(
-        (order: OrderType) =>
-          (order.enteredAt as string) >= today &&
-          (order.enteredAt as string) <= today
-      )
+      if (currentUser.role !== "admin") {
+        const todayOrders = orders.filter(
+          (order: OrderType) =>
+            (order.enteredAt as string) >= today &&
+            (order.enteredAt as string) <= today &&
+            order.userId === currentUser._id
+        )
 
-      setOrders(todayOrders)
+        setOrders(todayOrders)
+        setAllOrders(todayOrders)
+      } else {
+        const todayOrders = orders.filter(
+          (order: OrderType) =>
+            (order.enteredAt as string) >= today &&
+            (order.enteredAt as string) <= today
+        )
+
+        setOrders(todayOrders)
+        setAllOrders(todayOrders)
+      }
+
       // expenses
       const expenses = await fetchExpenses()
       const todayExpenses = expenses.filter(
@@ -111,12 +131,26 @@ function AllOrders() {
     setDate(`${newFrom} - ${newTo}`)
 
     // order
-    const orders = await fetchOrders()
-    const newOrders = orders.filter(
-      (order: OrderType) => order.enteredAt >= from && order.enteredAt <= to
-    )
+    if (currentUser.role !== "admin") {
+      const orders = await fetchOrders()
+      const newOrders = orders.filter(
+        (order: OrderType) =>
+          order.enteredAt >= from &&
+          order.enteredAt <= to &&
+          order.userId === currentUser._id
+      )
 
-    setOrders(newOrders)
+      setOrders(newOrders)
+      setAllOrders(newOrders)
+    } else {
+      const orders = await fetchOrders()
+      const newOrders = orders.filter(
+        (order: OrderType) => order.enteredAt >= from && order.enteredAt <= to
+      )
+
+      setOrders(newOrders)
+      setAllOrders(newOrders)
+    }
 
     // expenses
     const expenses = await fetchExpenses()
@@ -193,8 +227,35 @@ function AllOrders() {
     }
   }
 
+  // Create filter buttons
+  const createFilterBtns = async () => {
+    const users = currentUser.role === "admin" ? await fetchUsers() : []
+    const filterBtns = ["All", ...new Set(users.map((user) => user.userName))]
+    setFilterBtns(filterBtns as string[])
+    setUsers(users)
+  }
+
+  // Filter Products
+  const filterFunction = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value
+    const user =
+      currentUser.role === "admin"
+        ? users.find((user) => user.userName === value)
+        : null
+
+    const filteredOrders = allOrders.filter((order) => {
+      if (value === "All") {
+        return order
+      } else if (order.userId === user?._id) {
+        return order
+      }
+    })
+    setOrders(filteredOrders)
+  }
+
   useEffect(() => {
     getOrders()
+    createFilterBtns()
   }, [])
 
   useEffect(() => {
@@ -220,6 +281,12 @@ function AllOrders() {
           <div className='bg-white p-2 rounded-md py-3 shadow'>
             <SearchOrderForm searchOrders={searchOrders} />
           </div>
+          {currentUser.role === "admin" && (
+            <Filter
+              filterBtns={filterBtns as string[]}
+              filterFunction={filterFunction as () => void}
+            />
+          )}
           <h1 className='mt-5 text-xs md:text-sm lg:text-base'>
             Showing{" "}
             <span className='text-blue-800 font-semibold'>

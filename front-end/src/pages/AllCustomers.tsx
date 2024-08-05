@@ -1,47 +1,42 @@
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useEffect } from "react"
 import customFetch from "../utils/customFetch"
-import { useLoaderData } from "react-router-dom"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { CustomerType } from "../utils/types"
 import SingleCustomer from "../components/SingleCustomer"
 import FormRow from "../components/FormRow"
-
-export const loader = async () => {
-  try {
-    const {
-      data: { customers },
-    } = await customFetch.get("/customer")
-    return customers
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      return toast.error(error?.response?.data?.msg)
-    }
-  }
-}
+import { useDashboardContext } from "./DashboardLayout"
 
 function AllCustomers() {
-  const [isSubmitting, setIsSubmitting] = useState("")
-  const customers = useLoaderData() as CustomerType[]
+  const { fetchCustomers } = useDashboardContext()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [customers, setCustomers] = useState<CustomerType[]>([])
 
   // submit form
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData)
-    setIsSubmitting("submitting")
+    setIsSubmitting(true)
     try {
       await customFetch.post("/customer", data)
       toast.success("customer added")
-      location.reload()
-      setIsSubmitting("")
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.msg)
-        setIsSubmitting("")
       }
     }
+    setIsSubmitting(false)
   }
+
+  const getCustomers = async () => {
+    const customers = await fetchCustomers()
+    setCustomers(customers)
+  }
+
+  useEffect(() => {
+    getCustomers()
+  }, [isSubmitting])
   return (
     <main>
       <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5 font-bold'>Customers</h1>
@@ -75,7 +70,7 @@ function AllCustomers() {
             <button
               type='submit'
               className={`bg-[var(--primary)] p-[10px] rounded text-white hover:bg-[var(--hoverColor)] ease-in-out duration-300 self-end ${
-                isSubmitting === "submitting" && "cursor-wait"
+                isSubmitting && "cursor-wait"
               }`}
             >
               Add Customer

@@ -12,7 +12,7 @@ export type ProductTypes = {
   _id: string
   CP: number
   SP: number
-  branch: string
+  branch?: string
   image: string
   name: string
   qty: number
@@ -20,6 +20,7 @@ export type ProductTypes = {
   userId: string
   minimumQty?: number
   maximumQty?: number
+  category?: string
 }
 
 export type WorthType = {
@@ -59,6 +60,7 @@ export type OrderType = {
   cash?: number
   bank?: number
   customer: CustomerType
+  createdAt?: string
 }
 
 export type CustomerType = {
@@ -95,4 +97,9 @@ export type TransactionType = {
   remark: string
   enteredAt: string
   action?: string
+}
+
+export type CategoryType = {
+  _id: string
+  name: string
 }

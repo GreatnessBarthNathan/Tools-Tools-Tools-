@@ -10,7 +10,7 @@ import { useDashboardContext } from "./DashboardLayout"
 import SingleCashRecord from "../components/SingleCashRecord"
 
 function Cash() {
-  const { fetchCash, currentUser } = useDashboardContext()
+  const { fetchCash } = useDashboardContext()
   const [cash, setCash] = useState<TransactionType[]>([])
   const [loading, setLoading] = useState(false)
   const [date, setDate] = useState("")
@@ -120,7 +120,8 @@ function Cash() {
     <main className='w-full p-1 md:p-5 lg:p-10'>
       <div className='text-sm lg:text-3xl mb-5 font-bold flex justify-between'>
         <h1>Cash Records</h1>
-        <h1 className={`${currentUser.role !== "admin" && "hidden"}`}>
+        {/* <h1 className={`${currentUser.role !== "admin" && "hidden"}`}> */}
+        <h1>
           Balance:{" "}
           {Intl.NumberFormat("en-NG", {
             style: "currency",

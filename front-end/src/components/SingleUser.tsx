@@ -4,7 +4,14 @@ import customFetch from "../utils/customFetch"
 import axios from "axios"
 import { toast } from "react-toastify"
 
-function SingleUser({ firstName, lastName, role, approved, _id }: UserTypes) {
+function SingleUser({
+  firstName,
+  lastName,
+  role,
+  approved,
+  _id,
+  userName,
+}: UserTypes) {
   const [approve, setApprove] = useState(approved)
 
   //   HANDLE CHANGE
@@ -23,9 +30,12 @@ function SingleUser({ firstName, lastName, role, approved, _id }: UserTypes) {
   return (
     <>
       {role !== "admin" && (
-        <div className='grid grid-cols-4 border bg-white'>
+        <div className='grid grid-cols-5 border bg-white'>
           <p className='col-span-2 text-[8px] md:text-sm lg:text-base p-2 capitalize relative'>
             {firstName + " " + lastName}
+          </p>
+          <p className='text-[8px] md:text-xs lg:text-base p-2 text-center border-l'>
+            {userName}
           </p>
           <p className='text-[8px] md:text-xs lg:text-base p-2 text-center border-l'>
             {role}

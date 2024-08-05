@@ -14,17 +14,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteProduct = exports.updateProduct = exports.getSingleProduct = exports.getProducts = exports.createProduct = void 0;
 const productModel_1 = __importDefault(require("../models/productModel"));
+const userModel_1 = __importDefault(require("../models/userModel"));
 const http_status_codes_1 = require("http-status-codes");
 const customErrors_1 = require("../errors/customErrors");
 // CREATE NEW PRODUCT
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const { name, branch, qty, CP, SP, store } = req.body;
-    if (!name || !branch || !qty || !CP || !SP || !store)
+    var _a, _b, _c;
+    const { name, qty, CP, SP, store, category } = req.body;
+    if (!name || !qty || !CP || !SP || !store || !category)
         throw new customErrors_1.BadRequestError("Please provide all values");
     req.body.userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     if (((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Unauthorized to perform this task");
+    const user = yield userModel_1.default.findOne({ _id: (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId });
+    if (!user)
+        throw new customErrors_1.NotFoundError("User not found");
+    req.body.branch = user.branch;
     const existingProduct = yield productModel_1.default.findOne({ name });
     if (existingProduct)
         throw new customErrors_1.BadRequestError("Product already exists");
@@ -53,11 +58,11 @@ const getSingleProduct = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getSingleProduct = getSingleProduct;
 // UPDATE PRODUCT
 const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
-    const { name, branch, CP, SP, qty } = req.body;
-    if (!name || !branch || !CP || !SP || !qty)
+    var _d;
+    const { name, CP, SP, qty, category } = req.body;
+    if (!name || !CP || !SP || !qty || !category)
         throw new customErrors_1.BadRequestError("Please provide all values");
-    if (((_c = req.user) === null || _c === void 0 ? void 0 : _c.role) !== "admin")
+    if (((_d = req.user) === null || _d === void 0 ? void 0 : _d.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Unauthorized to perform this task");
     const product = yield productModel_1.default.findById(req.params.id);
     if (!product)
@@ -71,8 +76,8 @@ const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.updateProduct = updateProduct;
 // DELETE PRODUCT
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
-    if (((_d = req.user) === null || _d === void 0 ? void 0 : _d.role) !== "admin")
+    var _e;
+    if (((_e = req.user) === null || _e === void 0 ? void 0 : _e.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Unauthorized to perform this task");
     yield productModel_1.default.findByIdAndDelete(req.params.id);
     res.status(http_status_codes_1.StatusCodes.OK).json({ msg: "Product deleted" });

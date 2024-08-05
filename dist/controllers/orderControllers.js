@@ -68,7 +68,7 @@ const createOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.createOrder = createOrder;
 // GET ALL ORDERS
 const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const orders = yield orderModel_1.default.find({}).sort({ enteredAt: -1 });
+    const orders = yield orderModel_1.default.find({}).sort({ createdAt: -1 });
     res.status(http_status_codes_1.StatusCodes.OK).json({ count: orders.length, orders });
 });
 exports.getAllOrders = getAllOrders;

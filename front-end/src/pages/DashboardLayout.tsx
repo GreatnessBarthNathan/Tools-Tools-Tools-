@@ -12,6 +12,8 @@ import {
   ExpenseType,
   UserTypes,
   TransactionType,
+  CategoryType,
+  CustomerType,
 } from "../utils/types"
 import axios from "axios"
 import { toast } from "react-toastify"
@@ -20,7 +22,8 @@ type ValueTypes = {
   currentUser: UserTypes
   allProducts: ProductTypes[]
   products: ProductTypes[]
-  getProducts: () => Promise<ProductTypes[]>
+  fetchProducts: () => Promise<ProductTypes[]>
+  fetchStoreProducts: () => Promise<ProductTypes[]>
   submitting: boolean
   logout: () => void
   fetchExpenses: () => Promise<ExpenseType[]>
@@ -30,6 +33,8 @@ type ValueTypes = {
   fetchUsers: () => Promise<UserTypes[]>
   fetchCash: () => Promise<TransactionType[]>
   fetchBank: () => Promise<TransactionType[]>
+  fetchCategories: () => Promise<CategoryType[]>
+  fetchCustomers: () => Promise<CustomerType[]>
 }
 
 export const loader = async () => {
@@ -56,7 +61,6 @@ const DashboardContext = createContext<ValueTypes | undefined>(undefined)
 function DashboardLayout() {
   const { user: currentUser, products: allProducts } =
     useLoaderData() as CombinedTypes
-
   const [submitting] = useState(false)
   const [products, setProducts] = useState<ProductTypes[]>([])
   const [showSidebar, setShowSidebar] = useState(false)
@@ -124,8 +128,8 @@ function DashboardLayout() {
     }
   }
 
-  // GET PRODUCTS
-  const getProducts = async () => {
+  // FETCH PRODUCTS
+  const fetchProducts = async () => {
     try {
       const {
         data: { products },
@@ -140,6 +144,21 @@ function DashboardLayout() {
     }
   }
 
+  // FETCH STORE PRODUCTS
+  const fetchStoreProducts = async () => {
+    try {
+      const {
+        data: { products },
+      } = await customFetch.get("/store")
+      return products
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error?.response?.data?.msg)
+        return redirect("/dashboard")
+      }
+    }
+  }
+
   // FETCH ORDERS
   const fetchOrders = async () => {
     try {
@@ -148,6 +167,34 @@ function DashboardLayout() {
       } = await customFetch.get("/order")
 
       return orders
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.msg)
+      }
+    }
+  }
+
+  // FETCH CUSTOMERS
+  const fetchCustomers = async () => {
+    try {
+      const {
+        data: { customers },
+      } = await customFetch.get("/customer")
+      return customers
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        return toast.error(error?.response?.data?.msg)
+      }
+    }
+  }
+
+  // FETCH CATEGORIES
+  const fetchCategories = async () => {
+    try {
+      const {
+        data: { categories },
+      } = await customFetch.get("/category")
+      return categories
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.msg)
@@ -171,14 +218,15 @@ function DashboardLayout() {
 
   // STORE
   useEffect(() => {
-    getProducts()
+    fetchProducts()
   }, [])
 
   const values = {
     currentUser,
     allProducts,
     products,
-    getProducts,
+    fetchProducts,
+    fetchStoreProducts,
     submitting,
     logout,
     fetchExpenses,
@@ -188,6 +236,8 @@ function DashboardLayout() {
     fetchUsers,
     fetchCash,
     fetchBank,
+    fetchCustomers,
+    fetchCategories,
   }
   return (
     <>

@@ -1,13 +1,17 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import FormRow from "../components/FormRow"
+import FormSelect from "../components/FormSelect"
 import customFetch from "../utils/customFetch"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
+import { useDashboardContext } from "./DashboardLayout"
 
 function CreateProduct() {
+  const { fetchCategories } = useDashboardContext()
   const [isSubmitting, setIsSubmitting] = useState("")
   const navigate = useNavigate()
+  const [categories, setCategories] = useState<string[]>([])
 
   // submit form
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -27,6 +31,17 @@ function CreateProduct() {
       }
     }
   }
+
+  // const getCategories
+  const getCategories = async () => {
+    const categories = await fetchCategories()
+    const newCategories = categories.map((category) => category.name)
+    setCategories(newCategories)
+  }
+
+  useEffect(() => {
+    getCategories()
+  }, [])
   return (
     <main className='py-5'>
       <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
@@ -38,7 +53,6 @@ function CreateProduct() {
           className='grid md:grid-cols-2 lg:grid-cols-3 gap-2'
         >
           <FormRow type='text' labelText='name' name='name' required />
-          <FormRow type='text' labelText='branch' name='branch' required />
           <FormRow type='number' labelText='quantity' name='qty' required />
           <FormRow type='number' labelText='cost price' name='CP' required />
           <FormRow type='number' labelText='selling price' name='SP' required />
@@ -60,6 +74,8 @@ function CreateProduct() {
             name='store'
             required
           />
+          <FormSelect name='category' list={["all", ...categories]} required />
+
           <button
             type='submit'
             className={`bg-[var(--primary)] p-3 rounded text-white hover:bg-[var(--hoverColor)] ease-in-out duration-300 self-end ${

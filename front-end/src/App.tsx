@@ -27,15 +27,13 @@ import Bank from "./pages/Bank"
 import RecordCash from "./pages/RecordCash"
 import RecordBank from "./pages/RecordBank"
 import PurchaseList from "./pages/PurchaseList"
+import Settings from "./pages/Settings"
 
 // loaders
 import { loader as dashboardLoader } from "./pages/DashboardLayout"
-import { loader as productsLoader } from "./pages/AllProducts"
-import { loader as storeLoader } from "./pages/Store"
 import { loader as updateProductLoader } from "./pages/UpdateProduct"
 import { loader as updateStoreProductLoader } from "./pages/UpdateStoreProduct"
 import { loader as createOrderLoader } from "./pages/CreateOrder"
-import { loader as customersLoader } from "./pages/AllCustomers"
 import { loader as customerActivityLoader } from "./pages/CustomerActivity"
 import { loader as payDebtLoader } from "./pages/PayDebt"
 
@@ -86,12 +84,10 @@ const router = createBrowserRouter([
           {
             path: "products",
             element: <AllProducts />,
-            loader: productsLoader,
           },
           {
             path: "store",
             element: <Store />,
-            loader: storeLoader,
           },
           {
             path: "create-store-product",
@@ -105,7 +101,6 @@ const router = createBrowserRouter([
           {
             path: "customers",
             element: <AllCustomers />,
-            loader: customersLoader,
           },
           {
             path: "customer-activity/:id",
@@ -156,7 +151,7 @@ const router = createBrowserRouter([
           },
           {
             path: "settings",
-            element: <h1>Settings</h1>,
+            element: <Settings />,
           },
         ],
       },

@@ -1,75 +1,106 @@
-import { FormEvent, useState } from "react"
-import { Link, useLoaderData, redirect } from "react-router-dom"
+import { FormEvent, useState, ChangeEvent, useEffect } from "react"
+import { Link } from "react-router-dom"
 import SearchStoreForm from "../components/SearchStoreForm"
 import SingleStoreProduct from "../components/SingleStoreProduct"
-import { WorthType, ProductTypes } from "../utils/types"
-import axios from "axios"
-import { toast } from "react-toastify"
-
-import customFetch from "../utils/customFetch"
+import { ProductTypes } from "../utils/types"
 import { useDashboardContext } from "./DashboardLayout"
-
-export const loader = async () => {
-  try {
-    const {
-      data: { storeWorth: worth, products },
-    } = await customFetch.get("/store")
-    return { worth, products }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      toast.error(error?.response?.data?.msg)
-      return redirect("/dashboard")
-    }
-  }
-}
-
-type CombinedTypes = {
-  worth: WorthType
-  products: ProductTypes[]
-}
+import Filter from "../components/Filter"
+import Loading from "../components/Loading"
 
 function Store() {
-  const { worth, products } = useLoaderData() as CombinedTypes
-  const { currentUser } = useDashboardContext()
-  const [allStoreProducts, setAllStoreProducts] = useState(products)
+  const { currentUser, fetchStoreProducts } = useDashboardContext()
+  const [allProducts, setAllProducts] = useState<ProductTypes[]>([])
+  const [products, setProducts] = useState<ProductTypes[]>([])
+  const [worth, setWorth] = useState({ totalCost: 0, totalWorth: 0 })
+  const [loading, setLoading] = useState(false)
 
   const productNames = products.map((product) => product.name).sort()
 
-  const totalCost = new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(worth.totalCost)
-  const totalWorth = new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(worth.totalWorth)
-
-  // submit search form
-  const submitStoreForm = (e: FormEvent<HTMLFormElement>) => {
+  // submit search product form
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const select = formData.get("product")
 
     if (select === "all products") {
-      setAllStoreProducts(products)
+      setProducts(allProducts)
     } else {
-      const product = products.filter((product) => product.name === select)
-      setAllStoreProducts(product)
+      const product = allProducts.filter((product) => product.name === select)
+      setProducts(product)
     }
   }
 
+  // GET PRODUCTS
+  const getProducts = async () => {
+    setLoading(true)
+    const products = await fetchStoreProducts()
+    setAllProducts(products)
+    setProducts(products)
+    setLoading(false)
+  }
+
+  const calcWorth = () => {
+    const worth = products.reduce(
+      (total, value) => {
+        total.totalCost += value.CP * value.store
+        total.totalWorth += value.SP * value.store
+        return total
+      },
+      { totalCost: 0, totalWorth: 0 }
+    )
+    setWorth(worth)
+  }
+
+  // Create filter buttons
+  const filterBtns = [
+    "All",
+    ...new Set(allProducts.map((product) => product.category)),
+  ]
+
+  // Filter Products
+  const filterFunction = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value
+    const filteredProducts = allProducts.filter((product) => {
+      if (value === "All") {
+        return product
+      } else if (product.category === value) {
+        return product
+      }
+    })
+    setProducts(filteredProducts)
+  }
+
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  useEffect(() => {
+    calcWorth()
+  }, [products])
   return (
     <main>
       <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>Warehouse</h1>
+      <Filter
+        filterBtns={filterBtns as string[]}
+        filterFunction={filterFunction as () => void}
+      />
       <section className='bg-[var(--bgColor)] p-2 py-5'>
         {/* WORTH */}
         {currentUser.role === "admin" && (
           <div className='text-right text-xs md:text-base'>
             <h2 className='text-[8px] md:text-xs lg:text-base'>
-              Total Cost - {totalCost}
+              Total Cost -{" "}
+              {new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: "NGN",
+              }).format(worth.totalCost)}
             </h2>
             <h2 className='text-[8px] md:text-xs lg:text-base'>
-              Total Worth - {totalWorth}
+              Total Worth -{" "}
+              {new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: "NGN",
+              }).format(worth.totalWorth)}
             </h2>
           </div>
         )}
@@ -82,13 +113,10 @@ function Store() {
           </Link>
         </div>
         {/* SEARH FORM */}
-        <SearchStoreForm
-          list={productNames}
-          submitStoreForm={submitStoreForm}
-        />
+        <SearchStoreForm list={productNames} submitStoreForm={handleSubmit} />
         {/* PRODUCTS SECTION*/}
         <h1 className='mt-5 text-xs md:text-sm lg:text-base'>
-          Count: {allStoreProducts.length} products
+          Count: {products.length} products
         </h1>
         {/* HEADER */}
         <div className='grid grid-cols-7 border font-bold sticky top-[80px] md:top-[100px] bg-white z-10'>
@@ -112,11 +140,15 @@ function Store() {
           </h2>
         </div>
         {/* PRODUCTS */}
-        <div>
-          {allStoreProducts.map((product) => {
-            return <SingleStoreProduct key={product._id} {...product} />
-          })}
-        </div>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div>
+            {products.map((product) => {
+              return <SingleStoreProduct key={product._id} {...product} />
+            })}
+          </div>
+        )}
       </section>
     </main>
   )

@@ -13,6 +13,7 @@ function SingleOrder({
   customer,
   enteredAt,
   balance,
+  createdAt,
 }: OrderType) {
   const new_date = new Date(enteredAt)
   const [soldBy, setSoldBy] = useState("")
@@ -43,6 +44,7 @@ function SingleOrder({
         orderItems={orderItems}
         total={total}
         new_date={new_date}
+        createdAt={createdAt as string}
       />
       <section
         className={`${

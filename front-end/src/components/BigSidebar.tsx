@@ -23,7 +23,7 @@ const BigSidebar = () => {
         {/* logo */}
         <div>
           <Logo
-            container='w-[50%] m-auto mb-[30px] rounded-full overflow-hidden'
+            container='w-[40%] m-auto mb-[30px] rounded-full overflow-hidden'
             image='w-full'
           />
         </div>

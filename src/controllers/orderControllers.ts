@@ -71,7 +71,7 @@ export const getAllOrders = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const orders = await Order.find({}).sort({ enteredAt: -1 })
+  const orders = await Order.find({}).sort({ createdAt: -1 })
   res.status(StatusCodes.OK).json({ count: orders.length, orders })
 }
 

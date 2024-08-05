@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-
+import Loading from "../components/Loading"
 import {
   LoaderFunction,
   LoaderFunctionArgs,
@@ -34,8 +34,10 @@ function CustomerActivity() {
   const [customerDebt, setCustomerDebt] = useState(0)
   const { fetchOrders } = useDashboardContext()
   const { id } = useParams()
+  const [loading, setLoading] = useState(false)
 
   const loadPage = async () => {
+    setLoading(true)
     const orders = await fetchOrders()
     const customerOrders = orders.filter(
       (order) => order.customer.phoneNumber === id
@@ -47,6 +49,7 @@ function CustomerActivity() {
     }, 0)
     setCustomerOrders(customerOrders)
     setCustomerDebt(totalDebt)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -58,22 +61,27 @@ function CustomerActivity() {
         {customer.firstName + " " + customer.lastName + "'s"} Orders
       </h1>
       {/* HEADER */}
-
-      <h2 className='mt-5 md:mt-10 text-right text-sm md:text-base font-bold'>
-        Total Debt -{" "}
-        {new Intl.NumberFormat("en-NG", {
-          style: "currency",
-          currency: "NGN",
-        }).format(customerDebt)}
-      </h2>
-
-      {customerOrders.length < 1 ? (
-        <h1 className='text-center font-bold mt-5'>No activities</h1>
+      {loading ? (
+        <Loading />
       ) : (
         <>
-          {customerOrders.map((order) => (
-            <SingleCustomerActivity key={order._id} {...order} />
-          ))}
+          <h2 className='mt-5 md:mt-10 text-right text-sm md:text-base font-bold'>
+            Total Debt -{" "}
+            {new Intl.NumberFormat("en-NG", {
+              style: "currency",
+              currency: "NGN",
+            }).format(customerDebt)}
+          </h2>
+
+          {customerOrders.length < 1 ? (
+            <h1 className='text-center font-bold mt-5'>No activities</h1>
+          ) : (
+            <>
+              {customerOrders.map((order) => (
+                <SingleCustomerActivity key={order._id} {...order} />
+              ))}
+            </>
+          )}
         </>
       )}
     </main>

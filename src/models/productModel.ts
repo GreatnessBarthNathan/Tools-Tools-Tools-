@@ -31,6 +31,7 @@ const ProductSchema = new mongoose.Schema({
   },
   maximumQty: Number,
   minimumQty: Number,
+  category: String,
   userId: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

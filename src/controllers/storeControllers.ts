@@ -34,9 +34,9 @@ export const createStoreProduct = async (
 
 // UPDATE STORE PRODUCT
 export const updateStore = async (req: AuthenticatedRequest, res: Response) => {
-  const { name, branch, CP, SP, store, release } = req.body
+  const { name, CP, SP, store, release } = req.body
 
-  if (!name || !branch || !CP || !SP || !store)
+  if (!name || !CP || !SP || !store)
     throw new BadRequestError("Please provide all values")
   if (req.user?.role !== "admin")
     throw new UnAuthorizedError("Not permitted to perform this task")
@@ -63,11 +63,9 @@ export const calcStoreWorth = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  // if (req.user?.role !== "admin")
-  //   throw new UnAuthorizedError("Not permitted to perform this task")
   const products = await Product.find({ store: { $gte: 1 } }).sort({ name: 1 })
 
-  const storeWorth = await products.reduce(
+  const storeWorth = products.reduce(
     (total, value) => {
       total.totalCost += value.CP * value.store
       total.totalWorth += value.SP * value.store

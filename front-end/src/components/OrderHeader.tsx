@@ -8,6 +8,7 @@ function OrderHeader({
   total,
   new_date,
   setShowMore,
+  createdAt,
 }: {
   customer: CustomerType
   orderItems: OrderItemsType[]
@@ -15,6 +16,7 @@ function OrderHeader({
   new_date: Date
   showMore: boolean
   setShowMore: React.Dispatch<React.SetStateAction<boolean>>
+  createdAt: string
 }) {
   return (
     <div
@@ -42,13 +44,18 @@ function OrderHeader({
         }).format(total)}
       </p>
       <p className={`${showMore ? "col-span-2" : "col-span-1"} p-1 md:p-2`}>
-        {showMore
-          ? new Intl.DateTimeFormat(undefined, {
-              dateStyle: "long",
-            }).format(new_date)
-          : new Intl.DateTimeFormat("es", { dateStyle: "short" }).format(
-              new_date
-            )}
+        <span>
+          {showMore
+            ? new Intl.DateTimeFormat(undefined, {
+                dateStyle: "long",
+              }).format(new_date)
+            : new Intl.DateTimeFormat("es", { dateStyle: "short" }).format(
+                new_date
+              )}
+        </span>{" "}
+        <span className='font-normal'>
+          {createdAt ? new Date(createdAt as string).toLocaleTimeString() : ""}
+        </span>
       </p>
 
       <button

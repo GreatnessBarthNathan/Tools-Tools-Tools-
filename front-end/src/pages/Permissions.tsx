@@ -25,9 +25,12 @@ function Permissions() {
       <h1 className='md:text-2xl lg:text-4xl mb-5 mt-5 font-bold'>
         User Permissions
       </h1>
-      <div className='grid grid-cols-4 border font-bold sticky top-[80px] md:top-[100px] z-10 bg-white'>
+      <div className='grid grid-cols-5 border font-bold sticky top-[80px] md:top-[100px] z-10 bg-white'>
         <h2 className='col-span-2 text-[8px] md:text-xs lg:text-base p-2 text-left'>
           Name
+        </h2>
+        <h2 className='text-[8px] md:text-xs border-l lg:text-base p-2 text-center'>
+          Username
         </h2>
         <h2 className='text-[8px] md:text-xs border-l lg:text-base p-2 text-center'>
           Role

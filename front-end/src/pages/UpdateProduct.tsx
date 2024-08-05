@@ -10,6 +10,8 @@ import {
 } from "react-router-dom"
 import { ProductTypes } from "../utils/types"
 import axios from "axios"
+import FormSelect from "../components/FormSelect"
+import { useDashboardContext } from "./DashboardLayout"
 
 export const loader: LoaderFunction = async ({
   params,
@@ -27,11 +29,12 @@ export const loader: LoaderFunction = async ({
 }
 
 function UpdateProduct() {
+  const { fetchCategories } = useDashboardContext()
   const product = useLoaderData() as ProductTypes
+  const [categories, setCategories] = useState<string[]>([])
 
   const [targetProduct, setTargetProduct] = useState({
     name: product.name,
-    branch: product.branch,
     CP: product.CP,
     SP: product.SP,
     qty: product.qty,
@@ -39,6 +42,7 @@ function UpdateProduct() {
     newQty: 0,
     minimumQty: product.minimumQty,
     maximumQty: product.maximumQty,
+    category: product.category,
   })
 
   const [isSubmitting, setIsSubmitting] = useState("")
@@ -73,6 +77,17 @@ function UpdateProduct() {
     }
   }
 
+  // const getCategories
+  const getCategories = async () => {
+    const categories = await fetchCategories()
+    const newCategories = categories.map((category) => category.name)
+    setCategories(newCategories)
+  }
+
+  useEffect(() => {
+    getCategories()
+  }, [])
+
   return (
     <main className='py-5'>
       <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
@@ -93,19 +108,6 @@ function UpdateProduct() {
               className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
               onChange={(e) =>
                 setTargetProduct({ ...targetProduct, name: e.target.value })
-              }
-            />
-          </div>
-          <div className='w-full mt-3'>
-            <label className='capitalize block'>branch</label>
-            <input
-              type='text'
-              name='branch'
-              required
-              value={targetProduct.branch}
-              className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
-              onChange={(e) =>
-                setTargetProduct({ ...targetProduct, branch: e.target.value })
               }
             />
           </div>
@@ -213,6 +215,15 @@ function UpdateProduct() {
               readOnly
             />
           </div>
+          <FormSelect
+            name='category'
+            value={targetProduct.category}
+            list={["all", ...categories]}
+            extraStyle='mt-2'
+            onChange={(e) =>
+              setTargetProduct({ ...targetProduct, category: e.target.value })
+            }
+          />
 
           <button
             type='submit'

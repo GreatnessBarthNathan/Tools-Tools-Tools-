@@ -15,6 +15,7 @@ function SingleCustomerActivity({
   enteredAt,
   orderItems,
   balance,
+  createdAt,
 }: OrderType) {
   const { currentUser } = useDashboardContext()
   const editedDate = new Date(enteredAt)
@@ -66,7 +67,12 @@ function SingleCustomerActivity({
         }`}
       >
         <h2 className='p-2 '>
-          {new Intl.DateTimeFormat("es").format(editedDate)}
+          <span> {new Intl.DateTimeFormat("es").format(editedDate)}</span>{" "}
+          <span className='font-normal'>
+            {createdAt
+              ? new Date(createdAt as string).toLocaleTimeString()
+              : ""}
+          </span>
         </h2>
         <h2 className='p-2 '>
           {orderItems.length} Item{orderItems.length > 1 && "s"}

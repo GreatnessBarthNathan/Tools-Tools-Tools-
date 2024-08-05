@@ -30,7 +30,6 @@ function UpdateStoreProduct() {
   const product = useLoaderData() as ProductTypes
   const [storeProduct, setStoreProduct] = useState({
     name: product.name,
-    branch: product.branch,
     CP: product.CP,
     SP: product.SP,
     qty: product.store,
@@ -97,20 +96,6 @@ function UpdateStoreProduct() {
               className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
               onChange={(e) =>
                 setStoreProduct({ ...storeProduct, name: e.target.value })
-              }
-              readOnly
-            />
-          </div>
-          <div className='w-full mt-3'>
-            <label className='capitalize block'>branch</label>
-            <input
-              type='text'
-              name='branch'
-              required
-              value={storeProduct.branch}
-              className={`border capitalize border-blue-200 w-full rounded p-2 mt-1 outline-0`}
-              onChange={(e) =>
-                setStoreProduct({ ...storeProduct, branch: e.target.value })
               }
               readOnly
             />

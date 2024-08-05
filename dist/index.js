@@ -60,6 +60,7 @@ const storeRoutes_1 = __importDefault(require("./routes/storeRoutes"));
 const customerRoutes_1 = __importDefault(require("./routes/customerRoutes"));
 const cashRoutes_1 = __importDefault(require("./routes/cashRoutes"));
 const bankRoutes_1 = __importDefault(require("./routes/bankRoutes"));
+const categoryRoutes_1 = __importDefault(require("./routes/categoryRoutes"));
 if (process.env.NODE_ENV === "development") {
     app.use((0, morgan_1.default)("dev"));
 }
@@ -77,6 +78,7 @@ app.use("/api/v1/store", authMiddleware_1.authenticateUser, storeRoutes_1.defaul
 app.use("/api/v1/customer", authMiddleware_1.authenticateUser, customerRoutes_1.default);
 app.use("/api/v1/cash", authMiddleware_1.authenticateUser, cashRoutes_1.default);
 app.use("/api/v1/bank", authMiddleware_1.authenticateUser, bankRoutes_1.default);
+app.use("/api/v1/category", authMiddleware_1.authenticateUser, categoryRoutes_1.default);
 app.get("*", (req, res) => {
     res.sendFile(path_1.default.resolve(__dirname, "./public", "index.html"));
 });

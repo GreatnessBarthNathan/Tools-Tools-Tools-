@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import { AuthenticatedRequest } from "../middleware/authMiddleware"
 import Product from "../models/productModel"
+import User from "../models/userModel"
 import { StatusCodes } from "http-status-codes"
 import {
   BadRequestError,
@@ -13,14 +14,20 @@ export const createProduct = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { name, branch, qty, CP, SP, store } = req.body
-  if (!name || !branch || !qty || !CP || !SP || !store)
+  const { name, qty, CP, SP, store, category } = req.body
+  if (!name || !qty || !CP || !SP || !store || !category)
     throw new BadRequestError("Please provide all values")
 
   req.body.userId = req.user?.userId
 
   if (req.user?.role !== "admin")
     throw new UnAuthorizedError("Unauthorized to perform this task")
+
+  const user = await User.findOne({ _id: req.user?.userId })
+
+  if (!user) throw new NotFoundError("User not found")
+
+  req.body.branch = user.branch
 
   const existingProduct = await Product.findOne({ name })
   if (existingProduct) throw new BadRequestError("Product already exists")
@@ -60,8 +67,8 @@ export const updateProduct = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { name, branch, CP, SP, qty } = req.body
-  if (!name || !branch || !CP || !SP || !qty)
+  const { name, CP, SP, qty, category } = req.body
+  if (!name || !CP || !SP || !qty || !category)
     throw new BadRequestError("Please provide all values")
 
   if (req.user?.role !== "admin")

@@ -5,6 +5,7 @@ import Logo from "../components/Logo"
 import customFetch from "../utils/customFetch"
 import { toast } from "react-toastify"
 import axios from "axios"
+import PasswordInput from "../components/PasswordInput"
 
 function Login() {
   const [isSubmitting, setIsSubmitting] = useState("")
@@ -36,12 +37,16 @@ function Login() {
         <h2 className='text-center text-xl mb-10'>Login</h2>
         <form onSubmit={handleSubmit}>
           <FormRow type='text' labelText='username' name='userName' required />
-          <FormRow
-            type='password'
-            labelText='password'
-            name='password'
-            required
-          />
+          <div className='mt-2 text-xs md:text-sm lg:text-base'>
+            <label htmlFor='password' className='block'>
+              Password
+            </label>
+            <PasswordInput
+              input='p-2'
+              container='mt-1 rounded overflow-hidden'
+              name='password'
+            />
+          </div>
           <button
             type='submit'
             className={`text-white bg-[var(--primary)] w-full p-2 rounded mt-4 cursor-pointer hover:bg-[var(--hoverColor)] ease-in-out duration-300 ${

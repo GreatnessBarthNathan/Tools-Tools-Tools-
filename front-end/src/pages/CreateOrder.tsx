@@ -12,10 +12,11 @@ import { useNavigate, useLoaderData } from "react-router-dom"
 import axios from "axios"
 import SearchOrderProduct from "../components/SearchOrderProduct"
 import { useDashboardContext } from "./DashboardLayout"
-import { OrderItemsType, CustomerType } from "../utils/types"
+import { OrderItemsType, CustomerType, ProductTypes } from "../utils/types"
 import OrderItems from "../components/OrderItems"
 import EditOrderPrice from "../components/EditOrderPrice"
 import TransactionDetails from "../components/TransactionDetails"
+import Filter from "../components/Filter"
 
 type ValueTypes = {
   submitSearchOrderProduct: (e: FormEvent<HTMLFormElement>) => void
@@ -69,8 +70,10 @@ type CustomerTypeArray = {
 }
 
 function CreateOrder() {
-  const { allProducts } = useDashboardContext()
-  const productNames = allProducts.map((product) => product.name).sort()
+  const { fetchProducts } = useDashboardContext()
+  const [allProducts, setAllProducts] = useState<ProductTypes[]>([])
+  const [products, setProducts] = useState<ProductTypes[]>([])
+  const productNames = products.map((product) => product.name).sort()
   const [orderItems, setOrderItems] = useState<OrderItemsType[]>(
     getLocalStorage()
   )
@@ -207,7 +210,7 @@ function CreateOrder() {
       0
     )
     setTotal(orderTotal)
- 
+
     // calculate the diff for items
     orderItems.forEach((item) => {
       item.diff = item.subTotal - item.cost * item.pcs
@@ -295,16 +298,43 @@ function CreateOrder() {
     }
   }
 
+  // GET PRODUCTS
+  const getProducts = async () => {
+    const products = await fetchProducts()
+    setAllProducts(products)
+    setProducts(products)
+  }
+
+  // Create filter buttons
+  const filterBtns = [
+    "All",
+    ...new Set(allProducts.map((product) => product.category)),
+  ]
+
+  // Filter Products
+  const filterFunction = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value
+    const filteredProducts = allProducts.filter((product) => {
+      if (value === "All") {
+        return products
+      } else if (product.category === value) {
+        return product
+      }
+    })
+    setProducts(filteredProducts)
+  }
+
   useEffect(() => {
     getTotal()
   }, [orderItems])
 
   useEffect(() => {
-    const intervalID = setInterval(() => {
-      getBalance()
-    })
-    return () => clearInterval(intervalID)
-  })
+    getBalance()
+  }, [transaction, cash, bank])
+
+  useEffect(() => {
+    getProducts()
+  }, [])
 
   useEffect(() => {
     localStorage.setItem("orderItems", JSON.stringify(orderItems))
@@ -337,6 +367,10 @@ function CreateOrder() {
         <h1 className='md:text-2xl lg:text-4xl mb-2 lg:mb-5 font-bold'>
           Create New Order
         </h1>
+        <Filter
+          filterBtns={filterBtns as string[]}
+          filterFunction={filterFunction as () => void}
+        />
         <section className='bg-white px-2 py-5 rounded-md shadow'>
           <SearchOrderProduct />
         </section>

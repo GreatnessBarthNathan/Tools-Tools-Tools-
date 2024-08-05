@@ -36,8 +36,8 @@ exports.createStoreProduct = createStoreProduct;
 // UPDATE STORE PRODUCT
 const updateStore = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
-    const { name, branch, CP, SP, store, release } = req.body;
-    if (!name || !branch || !CP || !SP || !store)
+    const { name, CP, SP, store, release } = req.body;
+    if (!name || !CP || !SP || !store)
         throw new customErrors_1.BadRequestError("Please provide all values");
     if (((_b = req.user) === null || _b === void 0 ? void 0 : _b.role) !== "admin")
         throw new customErrors_1.UnAuthorizedError("Not permitted to perform this task");
@@ -54,10 +54,8 @@ const updateStore = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.updateStore = updateStore;
 // CALCULATE WORTH OF GOODS IN STORE
 const calcStoreWorth = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // if (req.user?.role !== "admin")
-    //   throw new UnAuthorizedError("Not permitted to perform this task")
     const products = yield productModel_1.default.find({ store: { $gte: 1 } }).sort({ name: 1 });
-    const storeWorth = yield products.reduce((total, value) => {
+    const storeWorth = products.reduce((total, value) => {
         total.totalCost += value.CP * value.store;
         total.totalWorth += value.SP * value.store;
         return total;

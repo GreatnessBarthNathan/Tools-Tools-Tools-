@@ -32,28 +32,31 @@ const SingleOrderItemSchema = new mongoose.Schema({
   },
 })
 
-const OrderSchema = new mongoose.Schema({
-  total: {
-    type: Number,
-    required: true,
+const OrderSchema = new mongoose.Schema(
+  {
+    total: {
+      type: Number,
+      required: true,
+    },
+    orderItems: [SingleOrderItemSchema],
+    balance: Number,
+    cash: Number,
+    bank: Number,
+    customer: {
+      firstName: String,
+      lastName: String,
+      phoneNumber: String,
+      role: String,
+      _id: String,
+    },
+    userId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    enteredAt: { type: String, required: true },
   },
-  orderItems: [SingleOrderItemSchema],
-  balance: Number,
-  cash: Number,
-  bank: Number,
-  customer: {
-    firstName: String,
-    lastName: String,
-    phoneNumber: String,
-    role: String,
-    _id: String,
-  },
-  userId: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  enteredAt: { type: String, required: true },
-})
+  { timestamps: true }
+)
 
 export default mongoose.model("Order", OrderSchema)

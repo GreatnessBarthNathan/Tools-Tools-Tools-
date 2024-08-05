@@ -1,42 +1,19 @@
-import { useState, FormEvent } from "react"
-import { useLoaderData } from "react-router-dom"
-import customFetch from "../utils/customFetch"
+import { useState, FormEvent, useEffect, ChangeEvent } from "react"
 import SearchProductForm from "../components/SearchProductForm"
 import SingleProduct from "../components/SingleProduct"
-import { WorthType, ProductTypes } from "../utils/types"
+import { ProductTypes } from "../utils/types"
 import { useDashboardContext } from "./DashboardLayout"
-
-export const loader = async () => {
-  try {
-    const {
-      data: { worth, products },
-    } = await customFetch.get("/product")
-    return { worth, products }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-type CombinedTypes = {
-  worth: WorthType
-  products: ProductTypes[]
-}
+import Filter from "../components/Filter"
+import Loading from "../components/Loading"
 
 function AllProducts() {
-  const { currentUser } = useDashboardContext()
-  const { worth, products } = useLoaderData() as CombinedTypes
-  const [allProducts, setAllProducts] = useState(products)
+  const { currentUser, fetchProducts } = useDashboardContext()
+  const [allProducts, setAllProducts] = useState<ProductTypes[]>([])
+  const [products, setProducts] = useState<ProductTypes[]>([])
+  const [worth, setWorth] = useState({ totalCost: 0, totalWorth: 0 })
+  const [loading, setLoading] = useState(false)
 
   const productNames = products.map((product) => product.name).sort()
-
-  const totalCost = new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(worth.totalCost)
-  const totalWorth = new Intl.NumberFormat("en-NG", {
-    style: "currency",
-    currency: "NGN",
-  }).format(worth.totalWorth)
 
   // submit search product form
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -45,25 +22,84 @@ function AllProducts() {
     const select = formData.get("product")
 
     if (select === "all products") {
-      setAllProducts(products)
+      setProducts(allProducts)
     } else {
-      const product = products.filter((product) => product.name === select)
-      setAllProducts(product)
+      const product = allProducts.filter((product) => product.name === select)
+      setProducts(product)
     }
   }
 
+  // GET PRODUCTS
+  const getProducts = async () => {
+    setLoading(true)
+    const products = await fetchProducts()
+    setAllProducts(products)
+    setProducts(products)
+    setLoading(false)
+  }
+
+  const calcWorth = () => {
+    const worth = products.reduce(
+      (total, value) => {
+        total.totalCost += value.qty * value.CP
+        total.totalWorth += value.qty * value.SP
+        return total
+      },
+      { totalCost: 0, totalWorth: 0 }
+    )
+    setWorth(worth)
+  }
+
+  // Create filter buttons
+  const filterBtns = [
+    "All",
+    ...new Set(allProducts.map((product) => product.category)),
+  ]
+
+  // Filter Products
+  const filterFunction = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value
+    const filteredProducts = allProducts.filter((product) => {
+      if (value === "All") {
+        return product
+      } else if (product.category === value) {
+        return product
+      }
+    })
+    setProducts(filteredProducts)
+  }
+
+  useEffect(() => {
+    getProducts()
+  }, [])
+
+  useEffect(() => {
+    calcWorth()
+  }, [products])
   return (
     <main className='pb-10'>
       <h1 className='md:text-2xl lg:text-4xl mb-1 mt-5'>All Products</h1>
+      <Filter
+        filterBtns={filterBtns as string[]}
+        filterFunction={filterFunction as () => void}
+      />
       <section className='bg-white p-2 py-5'>
         {/* WORTH */}
         {currentUser.role === "admin" && (
           <div className='text-right text-xs md:text-base'>
             <h2 className='text-[8px] md:text-xs lg:text-base'>
-              Total Cost - {totalCost}
+              Total Cost -{" "}
+              {new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: "NGN",
+              }).format(worth.totalCost)}
             </h2>
             <h2 className='text-[8px] md:text-xs lg:text-base'>
-              Total Worth - {totalWorth}
+              Total Worth -{" "}
+              {new Intl.NumberFormat("en-NG", {
+                style: "currency",
+                currency: "NGN",
+              }).format(worth.totalWorth)}
             </h2>
           </div>
         )}
@@ -95,11 +131,15 @@ function AllProducts() {
           </h2>
         </div>
         {/* PRODUCTS */}
-        <div>
-          {allProducts.map((product) => {
-            return <SingleProduct key={product._id} {...product} />
-          })}
-        </div>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div>
+            {products.map((product) => {
+              return <SingleProduct key={product._id} {...product} />
+            })}
+          </div>
+        )}
       </section>
     </main>
   )

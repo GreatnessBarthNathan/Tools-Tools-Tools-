@@ -57,6 +57,6 @@ const OrderSchema = new mongoose_1.default.Schema({
         required: true,
     },
     enteredAt: { type: String, required: true },
-});
+}, { timestamps: true });
 exports.default = mongoose_1.default.model("Order", OrderSchema);
 //# sourceMappingURL=orderModel.js.map
