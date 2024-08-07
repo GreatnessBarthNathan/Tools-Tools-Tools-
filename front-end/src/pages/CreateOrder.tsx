@@ -8,7 +8,7 @@ import {
 } from "react"
 import customFetch from "../utils/customFetch"
 import { toast } from "react-toastify"
-import { useNavigate, useLoaderData } from "react-router-dom"
+import { useLoaderData } from "react-router-dom"
 import axios from "axios"
 import SearchOrderProduct from "../components/SearchOrderProduct"
 import { useDashboardContext } from "./DashboardLayout"
@@ -94,7 +94,6 @@ function CreateOrder() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const navigate = useNavigate()
   const { customers } = useLoaderData() as CustomerTypeArray
 
   // SUBMIT SEARCH PRODUCT FORM
@@ -287,7 +286,7 @@ function CreateOrder() {
     try {
       await customFetch.post("/order", data)
       toast.success("Order created")
-      navigate("/dashboard/orders")
+      setOrderItems([])
       setIsSubmitting(false)
       localStorage.removeItem("orderItems")
     } catch (error) {
