@@ -74,7 +74,7 @@ function CreateProduct() {
             name='store'
             required
           />
-          <FormSelect name='category' list={["all", ...categories]} required />
+          <FormSelect name='category' list={["All", ...categories]} required />
 
           <button
             type='submit'

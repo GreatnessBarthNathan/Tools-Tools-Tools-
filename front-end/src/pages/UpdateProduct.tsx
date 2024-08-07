@@ -218,7 +218,7 @@ function UpdateProduct() {
           <FormSelect
             name='category'
             value={targetProduct.category}
-            list={["all", ...categories]}
+            list={["All", ...categories]}
             extraStyle='mt-2'
             onChange={(e) =>
               setTargetProduct({ ...targetProduct, category: e.target.value })
