@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa"
 
 function PasswordInput({
   input,
@@ -17,16 +16,16 @@ function PasswordInput({
     >
       <input
         type={showPassword ? "text" : "password"}
-        className={`w-[95%] ${input}`}
+        className={`w-[85%] ${input}`}
         required
         name={name}
       />
       <button
         type='button'
         onClick={() => setShowPassword(!showPassword)}
-        className='w-[5%] border-none outline-none flex justify-center items-center'
+        className='w-[15%] border-none outline-none flex justify-center items-center'
       >
-        {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+        {showPassword ? "hide" : "show"}
       </button>
     </div>
   )
