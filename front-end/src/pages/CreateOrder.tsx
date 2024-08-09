@@ -289,6 +289,7 @@ function CreateOrder() {
       setOrderItems([])
       setIsSubmitting(false)
       localStorage.removeItem("orderItems")
+      location.reload()
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.msg)
